@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Executor Kit — Product &amp; Listing Design</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="executor-design/brand.css" />
+<style>
+  html, body { margin: 0; height: 100%; background: #ece7df; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="executor-design/image-slot.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="executor-design/design-canvas.jsx"></script>
+<script type="text/babel" src="executor-design/kit-primitives.jsx"></script>
+<script type="text/babel" src="executor-design/listing-cards-1.jsx"></script>
+<script type="text/babel" src="executor-design/listing-cards-2.jsx"></script>
+<script type="text/babel" src="executor-design/product-cards.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+/* DesignCanvas, DCSection, DCArtboard are already global from design-canvas.jsx */
+
+/* ---------------- Design-direction intro board ---------------- */
+function Swatch({ c, name, hex, dark }) {
+  return (
+    <div style={{ flex: "1 1 0", minWidth: 0 }}>
+      <div style={{ height: 86, background: c, borderRadius: 12, boxShadow: "inset 0 0 0 1px rgba(34,58,82,.10)" }} />
+      <div className="sans" style={{ fontSize: 14, fontWeight: 700, color: "var(--navy)", marginTop: 10 }}>{name}</div>
+      <div className="mono" style={{ fontSize: 12, color: "var(--ink-55)" }}>{hex}</div>
+    </div>
+  );
+}
+function TypeSpec({ family, label, sample, note }) {
+  return (
+    <div style={{ flex: 1, background: "var(--white)", borderRadius: 14, padding: "22px 24px", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ fontFamily: family, fontSize: 56, color: "var(--navy)", lineHeight: 1 }}>{sample}</div>
+      <div className="sans" style={{ fontSize: 16, fontWeight: 700, color: "var(--navy)", marginTop: 14 }}>{label}</div>
+      <div className="mono" style={{ fontSize: 12.5, color: "var(--ink-55)", marginTop: 3 }}>{note}</div>
+    </div>
+  );
+}
+function IntroBoard() {
+  const principles = [
+    ["Calm over clever", "One next right thing — never a wall of tasks. Sequence, not a pile."],
+    ["Warm paper, not cold white", "A softer neutral palette eases an emotionally heavy subject."],
+    ["The accounting is the hero", "We surface the hard part competitors bury in empty tables."],
+    ["Trust through restraint", "Deep navy, one brass accent, generous space. No noise."],
+  ];
+  return (
+    <div style={{ width: 1180, background: "var(--paper)", padding: 64, fontFamily: "var(--sans)", boxSizing: "border-box" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <Wordmark size={24} />
+        <span className="pill pill-sage" style={{ padding: "8px 16px", fontSize: 14 }}>Design direction · v1</span>
+      </div>
+      <h1 className="display" style={{ fontSize: 60, margin: "30px 0 0", maxWidth: 980 }}>
+        A calm system for the hardest job — designed to outsell the templates.
+      </h1>
+      <p className="lede" style={{ fontSize: 22, margin: "18px 0 0", maxWidth: 900 }}>
+        Two deliverables in one direction: a <b style={{ color: "var(--navy)" }}>10-image Etsy listing carousel</b> that
+        wins the click on emotion and trust, and a <b style={{ color: "var(--navy)" }}>visual redesign of the workbook + guide</b>
+        &nbsp;so the product feels as considered as the promise. The competition ships spreadsheets; we ship reassurance.
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28, marginTop: 40 }}>
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 16 }}>Principles</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {principles.map(([t, d]) => (
+              <div key={t} style={{ display: "flex", gap: 14 }}>
+                <span style={{ flex: "none", width: 10, height: 10, marginTop: 6, borderRadius: 3, background: "var(--gold)" }} />
+                <div>
+                  <div className="sans" style={{ fontSize: 18, fontWeight: 700, color: "var(--navy)" }}>{t}</div>
+                  <div className="sans" style={{ fontSize: 15.5, color: "var(--ink-55)", marginTop: 2, lineHeight: 1.45 }}>{d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 16 }}>The differentiators we design around</div>
+          <ul className="clist" style={{ gap: 12 }}>
+            {[
+              "Automatic final accounting — the genuinely hard part",
+              "Death-certificate tracking — the universal pain point",
+              "Emotional First-30-Days onboarding, not bare tables",
+              "Excel + Google Sheets in one purchase",
+            ].map((t) => (
+              <li key={t}><span className="tick"><Check /></span><span className="ct" style={{ fontSize: 16 }}>{t}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="eyebrow" style={{ margin: "44px 0 16px" }}>Palette · navy + sage + brass on warm paper</div>
+      <div style={{ display: "flex", gap: 14 }}>
+        <Swatch c="var(--navy)" name="Navy" hex="#223a52" />
+        <Swatch c="var(--navy-deep)" name="Deep" hex="#182b3e" />
+        <Swatch c="var(--sage)" name="Sage" hex="#e7efe5" />
+        <Swatch c="var(--sage-deep)" name="Sage deep" hex="#c4d6c0" />
+        <Swatch c="var(--gold)" name="Brass" hex="#b58a34" />
+        <Swatch c="var(--clay)" name="Clay" hex="#bd7b5c" />
+        <Swatch c="var(--paper)" name="Paper" hex="#faf7f1" />
+        <Swatch c="var(--paper-2)" name="Paper 2" hex="#f4ede1" />
+      </div>
+
+      <div className="eyebrow" style={{ margin: "40px 0 16px" }}>Type · a calm serif, a humanist sans, a quiet mono</div>
+      <div style={{ display: "flex", gap: 16 }}>
+        <TypeSpec family="var(--serif)" sample="Ag" label="Spectral" note="Display & headlines" />
+        <TypeSpec family="var(--sans)" sample="Ag" label="Hanken Grotesk" note="Body, UI, labels" />
+        <TypeSpec family="var(--mono)" sample="Ag" label="Spline Sans Mono" note="Eyebrows, data, captions" />
+      </div>
+    </div>
+  );
+}
+
+const LW = window.LISTING_W, LH = window.LISTING_H;
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="direction" title="Design direction" subtitle="The strategy, palette & type behind both deliverables">
+        <DCArtboard id="intro" label="Direction" width={1180} height={1184}><IntroBoard /></DCArtboard>
+      </DCSection>
+
+      <DCSection id="carousel" title="Etsy listing carousel — 10 images" subtitle="4:5 portrait · ordered to win the click, then the sale">
+        <DCArtboard id="l1" label="01 · Hero" width={LW} height={LH}><Card01 /></DCArtboard>
+        <DCArtboard id="l2" label="02 · 12 tabs" width={LW} height={LH}><Card02 /></DCArtboard>
+        <DCArtboard id="l3" label="03 · First 30 Days" width={LW} height={LH}><Card03 /></DCArtboard>
+        <DCArtboard id="l4" label="04 · Final Accounting" width={LW} height={LH}><Card04 /></DCArtboard>
+        <DCArtboard id="l5" label="05 · The guide" width={LW} height={LH}><Card05 /></DCArtboard>
+        <DCArtboard id="l6" label="06 · What's included" width={LW} height={LH}><Card06 /></DCArtboard>
+        <DCArtboard id="l7" label="07 · Three rules" width={LW} height={LH}><Card07 /></DCArtboard>
+        <DCArtboard id="l8" label="08 · Cert. tracker" width={LW} height={LH}><Card08 /></DCArtboard>
+        <DCArtboard id="l9" label="09 · Both formats" width={LW} height={LH}><Card09 /></DCArtboard>
+        <DCArtboard id="l10" label="10 · Why this one" width={LW} height={LH}><Card10 /></DCArtboard>
+      </DCSection>
+
+      <DCSection id="workbook" title="Product redesign — the workbook" subtitle="The actual 12-tab surface, evolved to feel calm and considered">
+        <DCArtboard id="p1" label="Start Here" width={1180} height={720}><ProdStartHere /></DCArtboard>
+        <DCArtboard id="p2" label="Assets" width={1180} height={720}><ProdAssets /></DCArtboard>
+        <DCArtboard id="p3" label="Estate Ledger" width={1180} height={640}><ProdLedger /></DCArtboard>
+      </DCSection>
+
+      <DCSection id="guide" title="Product redesign — the guide" subtitle="The companion PDF: cover + an interior spread">
+        <DCArtboard id="g1" label="Guide cover" width={760} height={980}><ProdGuideCover /></DCArtboard>
+        <DCArtboard id="g2" label="Interior spread" width={1520} height={820}><ProdGuideSpread /></DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
