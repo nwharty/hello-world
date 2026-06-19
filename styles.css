@@ -8,7 +8,8 @@
   --nyc-deep: #3a1fb8;
   --lego: #e8262d;      /* lego red */
   --lego-yellow: #ffd23f;
-  --birthday: #ff4f9a;
+  --wicked: #1f9d55;    /* emerald — Wicked green */
+  --soccer: #0a7cc0;    /* NYCFC blue */
   --shadow: 0 10px 40px -18px rgba(40, 20, 90, 0.45);
 }
 
@@ -31,8 +32,8 @@ a:hover { text-decoration: underline; }
 /* ---------- HERO ---------- */
 .hero {
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(255, 79, 154, 0.35), transparent 60%),
-    radial-gradient(900px 500px at 0% 20%, rgba(255, 210, 63, 0.30), transparent 55%),
+    radial-gradient(1100px 560px at 82% -10%, rgba(10, 124, 192, 0.40), transparent 60%),
+    radial-gradient(900px 500px at 0% 20%, rgba(255, 210, 63, 0.28), transparent 55%),
     linear-gradient(135deg, var(--nyc-deep), var(--nyc) 55%, #7b5cff);
   color: #fff;
   padding: 5.5rem 1.5rem 4rem;
@@ -57,7 +58,7 @@ a:hover { text-decoration: underline; }
   text-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
 }
 .hero h1 .amp { color: var(--lego-yellow); }
-.hero__sub { font-size: clamp(1rem, 2.4vw, 1.2rem); opacity: 0.95; max-width: 620px; margin: 0 auto; }
+.hero__sub { font-size: clamp(1rem, 2.4vw, 1.2rem); opacity: 0.95; max-width: 640px; margin: 0 auto; }
 .hero__chips { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin-top: 2rem; }
 .chip {
   background: rgba(255, 255, 255, 0.16);
@@ -126,7 +127,18 @@ a:hover { text-decoration: underline; }
 .card h3 { font-size: 1.2rem; margin-bottom: 0.4rem; }
 .card p { color: var(--ink-soft); font-size: 0.95rem; }
 .card a { display: inline-block; margin-top: 0.7rem; font-size: 0.9rem; }
-.card--swap { background: linear-gradient(135deg, #fff7e6, #fff); border-color: #ffe9b0; }
+.card--soccer { background: linear-gradient(135deg, #e9f6fd, #fff); border-color: #bfe5f7; }
+
+.callout {
+  margin-top: 1.6rem;
+  background: #fff7e6;
+  border: 1px solid #ffe9b0;
+  border-radius: 14px;
+  padding: 1.1rem 1.3rem;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+.callout strong { color: var(--ink); }
 
 /* ---------- TIMELINE ---------- */
 .timeline { margin-top: 1.5rem; }
@@ -151,7 +163,8 @@ a:hover { text-decoration: underline; }
   position: relative;
   z-index: 1;
 }
-.day--birthday .day__dot { background: var(--birthday); box-shadow: 0 0 0 2px var(--birthday), 0 0 18px var(--birthday); }
+.day--wicked .day__dot { background: var(--wicked); box-shadow: 0 0 0 2px var(--wicked), 0 0 16px var(--wicked); }
+.day--soccer .day__dot { background: var(--soccer); box-shadow: 0 0 0 2px var(--soccer), 0 0 16px var(--soccer); }
 .day__body {
   background: var(--card);
   border: 1px solid var(--line);
@@ -160,7 +173,8 @@ a:hover { text-decoration: underline; }
   margin-bottom: 1.2rem;
   box-shadow: var(--shadow);
 }
-.day--birthday .day__body { border-color: #ffc7df; background: linear-gradient(180deg, #fff5fa, #fff); }
+.day--wicked .day__body { border-color: #b6e6c8; background: linear-gradient(180deg, #f3fcf6, #fff); }
+.day--soccer .day__body { border-color: #bfe5f7; background: linear-gradient(180deg, #f0f9fe, #fff); }
 .day__head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
 .day__head h3 { font-size: 1.35rem; }
 .tag {
@@ -173,8 +187,8 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
 }
 .tag--off { background: #eef0ff; color: var(--nyc-deep); }
-.tag--show { background: #efe6ff; color: #6a2bd6; }
-.tag--birthday { background: var(--birthday); color: #fff; }
+.tag--wicked { background: var(--wicked); color: #fff; }
+.tag--soccer { background: var(--soccer); color: #fff; }
 .day__plan { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
 .day__plan li { padding-left: 1.2rem; position: relative; color: var(--ink-soft); }
 .day__plan li::before { content: "›"; position: absolute; left: 0; color: var(--nyc); font-weight: 700; }
@@ -188,7 +202,27 @@ a:hover { text-decoration: underline; }
   padding-top: 0.8rem;
 }
 
-/* ---------- STAY ---------- */
+/* ---------- HEADLINERS ---------- */
+.headliners {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.1rem;
+  margin-top: 1.5rem;
+}
+.headliner {
+  border-radius: 18px;
+  padding: 1.8rem 1.6rem;
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+.headliner__icon { font-size: 2.4rem; margin-bottom: 0.6rem; }
+.headliner h3 { font-size: 1.35rem; margin-bottom: 0.5rem; }
+.headliner p { font-size: 0.95rem; opacity: 0.95; }
+.headliner--wicked { background: linear-gradient(135deg, #0f6b3a, var(--wicked)); }
+.headliner--soccer { background: linear-gradient(135deg, #075a8c, var(--soccer)); }
+.headliner--lego { background: linear-gradient(135deg, #b81d23, var(--lego)); }
+
+/* ---------- STAY & TICKETS ---------- */
 .stay { display: grid; gap: 1.2rem; margin-top: 1.5rem; }
 .stay__block {
   background: var(--card);
@@ -199,39 +233,16 @@ a:hover { text-decoration: underline; }
   box-shadow: var(--shadow);
 }
 .stay__block--lego { border-left-color: var(--lego); }
-.stay__block h3 { font-size: 1.3rem; margin-bottom: 0.9rem; }
+.stay__block--wicked { border-left-color: var(--wicked); }
+.stay__block--soccer { border-left-color: var(--soccer); }
+.stay__block h3 { font-size: 1.25rem; margin-bottom: 0.9rem; }
 .stay__block ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
 .stay__block li { color: var(--ink-soft); padding-left: 1.1rem; position: relative; }
 .stay__block li::before { content: "•"; position: absolute; left: 0; color: var(--nyc); }
 .stay__block--lego li::before { color: var(--lego); }
+.stay__block--wicked li::before { color: var(--wicked); }
+.stay__block--soccer li::before { color: var(--soccer); }
 .stay__block strong { color: var(--ink); }
-.note {
-  margin-top: 1.1rem;
-  background: #fff7e6;
-  border: 1px solid #ffe9b0;
-  border-radius: 12px;
-  padding: 0.9rem 1.1rem;
-  font-size: 0.9rem;
-  color: var(--ink-soft);
-}
-
-/* ---------- FEATURE (Wicked) ---------- */
-.feature {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-  background: linear-gradient(135deg, #2a1466, #5b3df5);
-  color: #fff;
-  border-radius: 20px;
-  padding: 2rem;
-  margin-top: 1.5rem;
-  box-shadow: var(--shadow);
-}
-.feature__big { font-size: 3rem; line-height: 1; }
-.feature__body ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
-.feature__body li { padding-left: 1.2rem; position: relative; opacity: 0.95; }
-.feature__body li::before { content: "★"; position: absolute; left: 0; color: var(--lego-yellow); }
-.feature__body a { color: var(--lego-yellow); }
 
 /* ---------- BUDGET ---------- */
 .budget { overflow-x: auto; margin-top: 1rem; }
@@ -275,9 +286,7 @@ a:hover { text-decoration: underline; }
 /* ---------- RESPONSIVE ---------- */
 @media (min-width: 760px) {
   .stay { grid-template-columns: 1fr 1fr; }
-  .stay__block--full { grid-column: 1 / -1; }
 }
 @media (max-width: 520px) {
-  .feature { flex-direction: column; padding: 1.5rem; }
   .section { padding: 3rem 1.2rem; }
 }
