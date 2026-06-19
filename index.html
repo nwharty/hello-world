@@ -1,18 +1,264 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>my-first-website</title>
-  <LINK href="styles.css" rel="stylesheet" type="text/css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYC + LEGOLAND Birthday Trip · July 2026</title>
+  <meta name="description" content="The recommended family trip plan — 3 nights, 2 in NYC and 1 at LEGOLAND, arriving on her 8th birthday. July 24–27, 2026." />
+  <link href="styles.css" rel="stylesheet" type="text/css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 
 <body>
 
-<img src="https://octodex.github.com/images/daftpunktocat-thomas.gif" id="octocat" alt="octocat-gif" />
+<header class="hero">
+  <div class="hero__inner">
+    <p class="eyebrow">Friday Jul 24 – Monday Jul 27, 2026 · Family of five · Driving from Barre, MA</p>
+    <h1>NYC <span class="amp">+</span> LEGOLAND<br />Birthday Trip</h1>
+    <p class="hero__sub">The recommended plan — the birthday girl turns <strong>8</strong> on Sunday, July 26.<br />Three nights: two in the city, then a birthday-day arrival at LEGOLAND.</p>
+    <div class="hero__chips">
+      <span class="chip">🗽 2 nights in NYC</span>
+      <span class="chip">🎂 Birthday at LEGOLAND</span>
+      <span class="chip">🎭 Wicked matinee</span>
+      <span class="chip">🚗 Only 2 days off work</span>
+    </div>
+  </div>
+</header>
 
-<!-- Change this code here by copy and pasting your template on line 15 -->
-<p>Welcome to your first GitHub Pages website!</p>
+<nav class="subnav">
+  <a href="#glance">At a glance</a>
+  <a href="#itinerary">Day by day</a>
+  <a href="#stay">Where you'll stay</a>
+  <a href="#wicked">Wicked</a>
+  <a href="#sights">Sights</a>
+  <a href="#budget">Budget</a>
+  <a href="#checklist">Checklist</a>
+</nav>
+
+<main>
+
+  <!-- AT A GLANCE -->
+  <section id="glance" class="section">
+    <h2 class="section__title">The recommendation, at a glance</h2>
+    <p class="section__lead">Why this one: it costs the fewest workdays, keeps both weekend nights, gives the birthday girl a Broadway matinee and a birthday-day arrival at LEGOLAND — and everything in the city is brand new.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card__icon">🗺️</div>
+        <h3>Shape</h3>
+        <p>3 nights — 2 in NYC, then 1 at LEGOLAND. NYC first, LEGOLAND finale.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">💼</div>
+        <h3>Time off work</h3>
+        <p>Friday + Monday only. Both weekend nights are covered.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">🏨</div>
+        <h3>Hotel</h3>
+        <p>Homewood Suites – Midtown / Times Square. A suite with a full kitchen — the apartment feel, a new neighborhood.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">🎭</div>
+        <h3>Broadway</h3>
+        <p><em>Wicked</em>, Saturday Jul 25, 2:00pm matinee — wife + birthday girl (2 seats).</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">✨</div>
+        <h3>Fresh sights</h3>
+        <p>Summit One Vanderbilt, the Intrepid, Central Park, FAO Schwarz — none of last year's stops.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">🎂</div>
+        <h3>The birthday</h3>
+        <p>Central Park the fun way in the morning, then arrive at the LEGOLAND Hotel on her actual birthday.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ITINERARY -->
+  <section id="itinerary" class="section section--alt">
+    <h2 class="section__title">Day by day</h2>
+    <div class="timeline">
+
+      <article class="day">
+        <div class="day__rail"><span class="day__dot"></span></div>
+        <div class="day__body">
+          <div class="day__head">
+            <h3>Friday · Jul 24</h3>
+            <span class="tag tag--off">Day off</span>
+          </div>
+          <ul class="day__plan">
+            <li><strong>Morning:</strong> Drive Barre → NYC (~3 hr). Check in at Homewood Suites (Midtown / Theater District) and drop the car.</li>
+            <li><strong>Afternoon:</strong> Walk to Rockefeller Center and FAO Schwarz — the giant toy store, a fun birthday-week kickoff.</li>
+            <li><strong>Evening:</strong> Dinner, then Summit One Vanderbilt after dark — the mirrored, glass-floor observation deck. An easy walk from the hotel.</li>
+          </ul>
+          <p class="day__sleep">🛏️ Night 1 · Homewood Suites</p>
+        </div>
+      </article>
+
+      <article class="day">
+        <div class="day__rail"><span class="day__dot"></span></div>
+        <div class="day__body">
+          <div class="day__head">
+            <h3>Saturday · Jul 25</h3>
+            <span class="tag tag--show">Weekend · Wicked</span>
+          </div>
+          <ul class="day__plan">
+            <li><strong>Morning:</strong> Intrepid Sea, Air &amp; Space Museum — a real aircraft carrier, a space shuttle and a submarine. A big hit for your 6-year-old, walkable from the hotel.</li>
+            <li><strong>2:00pm:</strong> <em>Wicked</em> matinee — wife + birthday girl at the Gershwin. You take the 6- and 2-year-old to a Central Park playground or Little Island while the show runs (~2½ hrs).</li>
+            <li><strong>Evening:</strong> Birthday-eve family dinner.</li>
+          </ul>
+          <p class="day__sleep">🛏️ Night 2 · Homewood Suites</p>
+        </div>
+      </article>
+
+      <article class="day day--birthday">
+        <div class="day__rail"><span class="day__dot"></span></div>
+        <div class="day__body">
+          <div class="day__head">
+            <h3>Sunday · Jul 26</h3>
+            <span class="tag tag--birthday">🎂 Birthday</span>
+          </div>
+          <ul class="day__plan">
+            <li><strong>Morning — her day:</strong> Central Park the fun way — the Central Park Zoo, the carousel, and rowboats on the lake. Birthday breakfast or lunch in the park.</li>
+            <li><strong>Early afternoon:</strong> Drive to LEGOLAND (~1½ hr). Arrive at the LEGOLAND Hotel — a birthday surprise in itself: themed room with a kids' sleeping nook, pool, and nightly entertainment.</li>
+          </ul>
+          <p class="day__sleep">🛏️ Night 3 · LEGOLAND Hotel</p>
+        </div>
+      </article>
+
+      <article class="day">
+        <div class="day__rail"><span class="day__dot"></span></div>
+        <div class="day__body">
+          <div class="day__head">
+            <h3>Monday · Jul 27</h3>
+            <span class="tag tag--off">Day off</span>
+          </div>
+          <ul class="day__plan">
+            <li><strong>All day:</strong> LEGOLAND park — hotel guests get early ride access. Open ~10am–5pm+.</li>
+            <li><strong>Late afternoon:</strong> Drive home to Barre (~3 hr).</li>
+          </ul>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- STAY -->
+  <section id="stay" class="section">
+    <h2 class="section__title">Where you'll stay</h2>
+    <div class="stay">
+      <div class="stay__block">
+        <h3>In the city — Homewood Suites by Hilton, Midtown / Times Square</h3>
+        <ul>
+          <li><strong>Why it's the pick:</strong> suites with a full kitchen and a separate living area that sleep up to 6 — the apartment feel your wife wanted, and a real change from last year's Upper West Side stay. Free hot breakfast is a money-saver with three kids.</li>
+          <li><strong>Location:</strong> Theater District — a short walk to the Gershwin, Intrepid, and Rockefeller Center. Summer rates run roughly $350–500/night. <a href="https://www.hilton.com/en/hotels/nycmdhw-homewood-suites-new-york-midtown-manhattan-times-square-south/" target="_blank" rel="noopener">Book direct at hilton.com →</a></li>
+          <li><strong>Want to splurge?</strong> AKA Times Square is a true apart-hotel (full kitchen + washer/dryer, 1–2 bedroom apartments), roughly $500–800/night — <a href="https://www.stayaka.com/aka-times-square" target="_blank" rel="noopener">stayaka.com →</a></li>
+        </ul>
+        <p class="note"><strong>A note on Airbnb:</strong> NYC's Local Law 18 effectively ended short-stay whole-apartment rentals — a legal Airbnb under 30 nights now requires the host to live in the unit with you. An apart-hotel like the two above is the legal way to get the same kitchen-and-living-room setup.</p>
+      </div>
+      <div class="stay__block stay__block--lego">
+        <h3>At LEGOLAND — LEGOLAND New York Hotel (Goshen, NY)</h3>
+        <ul>
+          <li><strong>Themed rooms</strong> (Pirate, Kingdom, LEGO Friends, NINJAGO) with a separate kids' sleeping nook, a pool, and nightly entertainment.</li>
+          <li>Look at the <strong>Hotel + 2nd-Day-Free ticket package</strong>. Parking ~$35/night. <a href="https://www.legoland.com/new-york/places-to-stay/legoland-hotel/" target="_blank" rel="noopener">Book at legoland.com/new-york →</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- WICKED -->
+  <section id="wicked" class="section section--alt">
+    <h2 class="section__title">Wicked — what to book</h2>
+    <div class="feature">
+      <div class="feature__big">🎭</div>
+      <div class="feature__body">
+        <ul>
+          <li><strong>Saturday, July 25, 2:00pm, 2 seats</strong> (wife + birthday girl). The actual birthday Sunday is dark, and a matinee is far easier with kids — it also frees your afternoon with the younger two.</li>
+          <li>Mid-tier seats run about <strong>$130–180 each (~$300–360 total)</strong>; book early, matinees sell out. Buy from <a href="https://www.broadway.com/shows/wicked/event/21749410/07-25-2026/1400/" target="_blank" rel="noopener">Broadway.com</a> or <a href="https://www.telecharge.com/" target="_blank" rel="noopener">Telecharge</a>.</li>
+          <li><strong>Age:</strong> no children under 5 admitted; recommended 8+. Your birthday girl is right in the sweet spot.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIGHTS -->
+  <section id="sights" class="section">
+    <h2 class="section__title">Fresh sights <span class="muted">(none from last year)</span></h2>
+    <div class="cards cards--sights">
+      <div class="card">
+        <div class="card__icon">🌆</div>
+        <h3>Summit One Vanderbilt</h3>
+        <p>Mirrored, glass-floor observation experience; the birthday "wow." Best near sunset / after dark.</p>
+        <a href="https://www.summitov.com/" target="_blank" rel="noopener">summitov.com →</a>
+      </div>
+      <div class="card">
+        <div class="card__icon">🚀</div>
+        <h3>Intrepid Museum</h3>
+        <p>Aircraft carrier, space shuttle, and submarine. Great for your son.</p>
+        <a href="https://www.intrepidmuseum.org/" target="_blank" rel="noopener">intrepidmuseum.org →</a>
+      </div>
+      <div class="card">
+        <div class="card__icon">🎠</div>
+        <h3>Central Park, the fun way</h3>
+        <p>Central Park Zoo, the carousel, and rowboats; easy with the toddler and a lovely birthday morning.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">🧸</div>
+        <h3>FAO Schwarz</h3>
+        <p>The legendary toy store at Rockefeller Center — a natural birthday stop.</p>
+      </div>
+      <div class="card card--swap">
+        <div class="card__icon">🔁</div>
+        <h3>Backup / swap-ins</h3>
+        <p>The High Line + Little Island (free floating park), with lunch at Chelsea Market.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUDGET -->
+  <section id="budget" class="section section--alt">
+    <h2 class="section__title">Rough budget <span class="muted">(moderate)</span></h2>
+    <p class="section__lead">Estimates for the family of five — confirm live prices when you book.</p>
+    <div class="budget">
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Estimate</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Homewood Suites — 2 nights</td><td>~$700–1,000</td></tr>
+          <tr><td>LEGOLAND Hotel — 1 night</td><td>~$400–500</td></tr>
+          <tr><td>LEGOLAND park tickets (family, 1 day)</td><td>~$450–550</td></tr>
+          <tr><td>Wicked — 2 mid-tier seats</td><td>~$300–360</td></tr>
+          <tr><td>Summit + Intrepid (family admissions)</td><td>~$200–260</td></tr>
+          <tr><td>Gas, tolls, NYC parking</td><td>~$250–350</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td>Ballpark before food &amp; extras</td><td>~$2,300–3,020</td></tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section id="checklist" class="section">
+    <h2 class="section__title">Booking checklist</h2>
+    <ul class="checklist">
+      <li><label><input type="checkbox" /> <span><strong>Wicked first</strong> — Sat Jul 25, 2:00pm, 2 seats. It's the fixed point everything hangs on.</span></label></li>
+      <li><label><input type="checkbox" /> <span><strong>Homewood Suites</strong> (a 1-BR suite) for Fri + Sat, and the <strong>LEGOLAND Hotel + ticket package</strong> for Sun.</span></label></li>
+      <li><label><input type="checkbox" /> <span><strong>Timed tickets</strong> for Summit One Vanderbilt (Fri evening) and the Intrepid (Sat morning).</span></label></li>
+      <li><label><input type="checkbox" /> <span><strong>NYC parking</strong> near the hotel (garages ~$50–65/night) so the car is parked the whole NYC stay.</span></label></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>Made for the birthday girl 🎂 · NYC + LEGOLAND · July 24–27, 2026</p>
+  <p class="footer__small">Estimates are rough — confirm live prices when you book.</p>
+</footer>
 
 </body>
 </html>
