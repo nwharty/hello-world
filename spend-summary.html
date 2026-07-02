@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>June 2026 Spending Summary</title>
+<style>
+  .viz-root {
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --ink-1: #0b0b0b;
+    --ink-2: #52514e;
+    --ink-muted: #898781;
+    --grid: #e1e0d9;
+    --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --series-1: #2a78d6;   /* Essentials */
+    --series-2: #1baf7a;   /* Discretionary */
+    --series-3: #eda100;   /* Debt & interest */
+    --good-text: #006300;
+    --critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    .viz-root {
+      --surface-1: #1a1a19;
+      --page: #0d0d0d;
+      --ink-1: #ffffff;
+      --ink-2: #c3c2b7;
+      --ink-muted: #898781;
+      --grid: #2c2c2a;
+      --baseline: #383835;
+      --border: rgba(255,255,255,0.10);
+      --series-1: #3987e5;
+      --series-2: #199e70;
+      --series-3: #c98500;
+      --good-text: #0ca30c;
+      --critical: #d03b3b;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body.viz-root {
+    background: var(--page);
+    color: var(--ink-1);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 28px 20px 48px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 650; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-2); font-size: 13.5px; margin-top: 4px; }
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px 20px;
+    margin-top: 16px;
+  }
+  .card h2 { font-size: 14px; font-weight: 650; }
+  .card .note { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+
+  /* stat tiles */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-top: 16px; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .tile .label { font-size: 12px; color: var(--ink-2); }
+  .tile .value { font-size: 26px; font-weight: 650; margin-top: 4px; letter-spacing: -0.01em; }
+  .tile .delta { font-size: 12px; margin-top: 4px; color: var(--ink-muted); }
+  .tile .delta.bad { color: var(--critical); font-weight: 600; }
+  .tile .delta.good { color: var(--good-text); font-weight: 600; }
+
+  /* legend */
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0 2px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  /* horizontal bars */
+  .hbars { margin-top: 12px; }
+  .hrow { display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 10px; padding: 3px 0; border-radius: 6px; }
+  .hrow:hover { background: color-mix(in srgb, var(--ink-1) 4%, transparent); }
+  .hname { font-size: 12.5px; color: var(--ink-2); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .htrack { position: relative; height: 20px; display: flex; align-items: center; }
+  .hbar { height: 14px; border-radius: 0 4px 4px 0; min-width: 2px; }
+  .hval { font-size: 12px; color: var(--ink-1); margin-left: 8px; font-weight: 550; white-space: nowrap; }
+  .baseline-x { border-left: 1px solid var(--baseline); }
+
+  /* daily columns */
+  .cols { display: flex; align-items: flex-end; gap: 3px; height: 150px; margin-top: 30px; border-bottom: 1px solid var(--baseline); position: relative; }
+  .col { width: 100%; background: var(--series-1); border-radius: 4px 4px 0 0; min-height: 2px; position: relative; }
+  .col:hover { filter: brightness(1.15); }
+  .colwrap { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+  .xlab { display: flex; gap: 3px; margin-top: 6px; }
+  .xlab span { flex: 1; text-align: center; font-size: 10.5px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .peak-label { position: absolute; font-size: 11px; color: var(--ink-2); font-weight: 600; transform: translateX(-50%); white-space: nowrap; }
+
+  /* tooltip */
+  #tip {
+    position: fixed; pointer-events: none; z-index: 10; display: none;
+    background: var(--surface-1); color: var(--ink-1);
+    border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    padding: 8px 10px; font-size: 12px; line-height: 1.45; max-width: 240px;
+  }
+  #tip .t { color: var(--ink-2); }
+  #tip .v { font-weight: 650; font-size: 13px; }
+
+  /* recommendations */
+  .recs { display: grid; gap: 10px; margin-top: 12px; }
+  .rec { display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: baseline;
+         padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; }
+  .rec .n { width: 22px; height: 22px; border-radius: 50%; background: var(--series-1); color: #fff;
+            font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; align-self: start; }
+  .rec b { font-size: 13.5px; }
+  .rec p { font-size: 12.5px; color: var(--ink-2); margin-top: 3px; line-height: 1.5; }
+  .rec .save { font-size: 12.5px; font-weight: 650; color: var(--good-text); white-space: nowrap; }
+
+  /* table view */
+  details { margin-top: 14px; }
+  summary { font-size: 12.5px; color: var(--ink-2); cursor: pointer; }
+  table { border-collapse: collapse; margin-top: 10px; width: 100%; font-size: 12.5px; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--grid); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  th { color: var(--ink-2); font-weight: 600; }
+  .foot { font-size: 11.5px; color: var(--ink-muted); margin-top: 18px; line-height: 1.5; }
+</style>
+</head>
+<body class="viz-root">
+<div class="wrap">
+  <h1>June 2026 spending summary</h1>
+  <div class="sub">All accounts &middot; June 1–30, 2026 &middot; excludes paychecks, deposits, and credit-card payment transfers; refunds netted</div>
+
+  <div class="tiles">
+    <div class="tile"><div class="label">Total spend</div><div class="value">$14,607</div><div class="delta">vs $21,238 take-home in June</div></div>
+    <div class="tile"><div class="label">Interest &amp; bank fees</div><div class="value">$683</div><div class="delta bad">▲ pure cost — $8.2k/yr pace</div></div>
+    <div class="tile"><div class="label">Amazon</div><div class="value">$2,738</div><div class="delta">≈50 orders this month</div></div>
+    <div class="tile"><div class="label">Coffee + betting</div><div class="value">$850</div><div class="delta">$540 coffee shops · $310 sports bets</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Where the money went</h2>
+    <div class="note">Net outflow by category, June 2026</div>
+    <div class="legend">
+      <span><i style="background:var(--series-1)"></i>Essentials — $6,107</span>
+      <span><i style="background:var(--series-2)"></i>Discretionary — $6,450</span>
+      <span><i style="background:var(--series-3)"></i>Debt payments &amp; interest — $2,050</span>
+    </div>
+    <div class="hbars" id="catbars"></div>
+    <details>
+      <summary>View as table</summary>
+      <table id="cattable"><thead><tr><th>Category</th><th>Group</th><th class="num">June 2026</th><th class="num">Share</th></tr></thead><tbody></tbody></table>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>Top merchants</h2>
+    <div class="note">Ten largest net outflows by merchant</div>
+    <div class="hbars" id="merchbars"></div>
+  </div>
+
+  <div class="card">
+    <h2>Daily spend</h2>
+    <div class="note">Net outflow per day — spikes: Jun 5 (mortgage + car), Jun 22 (Affirm + credit union loan), Jun 2 ($982 Amazon order)</div>
+    <div class="cols" id="daily"></div>
+    <div class="xlab" id="dailyx"></div>
+  </div>
+
+  <div class="card">
+    <h2>Where to save</h2>
+    <div class="note">Ranked by impact; estimates based on June alone</div>
+    <div class="recs">
+      <div class="rec"><span class="n">1</span><span><b>Stop paying interest — it's $683/month of nothing.</b>
+        <p>Amex, Discover, Apple Card, and Chase interest plus a $386 balance-transfer fee. You're revolving on four-plus cards at once. Pick the highest-APR card and attack it with everything freed up below; stop putting new spend on cards that carry a balance so the 0% transfer window actually works.</p></span>
+        <span class="save">~$680/mo</span></div>
+      <div class="rec"><span class="n">2</span><span><b>Put a monthly cap on Amazon.</b>
+        <p>$2,738 across ~50 orders in one month, including a single $982 order on June 2. A 48-hour cart rule plus a hard $1,800/month cap keeps the essentials and cuts the impulse tail.</p></span>
+        <span class="save">~$900/mo</span></div>
+      <div class="rec"><span class="n">3</span><span><b>No new Affirm plans.</b>
+        <p>$967 of buy-now-pay-later payments this month on top of the card balances. Let existing plans run off; every new plan is a pre-spent future paycheck.</p></span>
+        <span class="save">frees $967/mo over time</span></div>
+      <div class="rec"><span class="n">4</span><span><b>Cut the sports betting.</b>
+        <p>$310 to theScore Bet in June, and DraftKings / ESPN BET show up in earlier months too. This is the cleanest 100% cut on the list.</p></span>
+        <span class="save">~$310/mo</span></div>
+      <div class="rec"><span class="n">5</span><span><b>Halve the coffee-shop habit.</b>
+        <p>$540/month: Corner Coffee $315 plus $225 of Starbucks reloads. Two shop visits a week instead of near-daily keeps the ritual for half the price.</p></span>
+        <span class="save">~$270/mo</span></div>
+      <div class="rec"><span class="n">6</span><span><b>Audit the fitness &amp; subscription stack.</b>
+        <p>$600/month gym plus $50 Peloton plus Oura, Netflix, Hulu, Apple, Microsoft, Tesla, Hearth Display (~$180 of subscriptions) — and two Jobber charges ($230). Keep what you use weekly; if Jobber is for a business, it belongs in business books, not the household budget.</p></span>
+        <span class="save">~$150–650/mo</span></div>
+    </div>
+    <p class="foot">Items 2, 4, and 5 alone free roughly <b>$1,480/month</b>. Directed at the highest-APR card balance, that also retires the ~$680/month interest line within months — a combined swing in the range of <b>$2,100+/month (&gt;$25k/year)</b> without touching housing, groceries, or childcare.</p>
+  </div>
+
+  <p class="foot">Source: transaction export, all accounts. Amounts are net of refunds. "Debt payments &amp; interest" = credit-card interest, balance-transfer + ATM fees, SoFi loan, and Affirm installments; mortgage and auto payments stay under Housing and Auto.</p>
+</div>
+
+<div id="tip"></div>
+
+<script>
+const DATA = {
+ cats:[{"name":"Shopping","v":3306.55,"g":"disc"},{"name":"Groceries","v":2467.14,"g":"ess"},{"name":"Housing & utilities","v":2314.30,"g":"ess"},{"name":"Debt payments & interest","v":2049.86,"g":"debt"},{"name":"Dining & drinks","v":1565.63,"g":"disc"},{"name":"Auto & transport","v":757.07,"g":"ess"},{"name":"Gym","v":600.00,"g":"disc"},{"name":"Entertainment & betting","v":415.99,"g":"disc"},{"name":"Cash, Venmo & software","v":383.98,"g":"disc"},{"name":"Household","v":338.36,"g":"ess"},{"name":"Subscriptions","v":177.52,"g":"disc"},{"name":"Childcare & education","v":110.00,"g":"ess"},{"name":"Personal care","v":84.00,"g":"ess"},{"name":"Insurance","v":36.15,"g":"ess"}],
+ merch:[{"name":"Amazon","v":2719.71},{"name":"Walmart","v":2341.77},{"name":"WF Home Mortgage","v":1717.41},{"name":"Affirm","v":966.95},{"name":"Toyota","v":668.91},{"name":"Wise (gym)","v":600.00},{"name":"SoFi Loan","v":400.00},{"name":"Balance Transfer Fee","v":385.87},{"name":"Corner Coffee","v":315.23},{"name":"theScore Bet","v":310.00}],
+ daily:[{"d":1,"v":494.10},{"d":2,"v":1747.55},{"d":3,"v":202.91},{"d":4,"v":71.13},{"d":5,"v":2107.34},{"d":6,"v":26.99},{"d":7,"v":290.71},{"d":8,"v":789.03},{"d":9,"v":756.70},{"d":10,"v":129.28},{"d":11,"v":242.34},{"d":12,"v":216.02},{"d":13,"v":113.21},{"d":14,"v":168.53},{"d":15,"v":1017.67},{"d":16,"v":517.62},{"d":17,"v":69.32},{"d":18,"v":494.43},{"d":19,"v":143.98},{"d":20,"v":62.34},{"d":21,"v":80.17},{"d":22,"v":1934.81},{"d":23,"v":194.66},{"d":24,"v":624.38},{"d":25,"v":1063.77},{"d":26,"v":509.38},{"d":27,"v":45.21},{"d":28,"v":53.00},{"d":29,"v":340.81},{"d":30,"v":99.16}],
+ total: 14606.55
+};
+const GROUPS = { ess:["Essentials","var(--series-1)"], disc:["Discretionary","var(--series-2)"], debt:["Debt payments & interest","var(--series-3)"] };
+const fmt = v => "$" + v.toLocaleString("en-US",{minimumFractionDigits:0, maximumFractionDigits:0});
+const fmt2 = v => "$" + v.toLocaleString("en-US",{minimumFractionDigits:2, maximumFractionDigits:2});
+const tip = document.getElementById("tip");
+function showTip(e, html){ tip.innerHTML = html; tip.style.display = "block"; moveTip(e); }
+function moveTip(e){
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX + pad, y = e.clientY + pad;
+  if (x + w > innerWidth - 8) x = e.clientX - w - pad;
+  if (y + h > innerHeight - 8) y = e.clientY - h - pad;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+function hideTip(){ tip.style.display = "none"; }
+
+function hbars(el, rows, colorFn, tipFn){
+  const max = Math.max(...rows.map(r => r.v));
+  el.innerHTML = rows.map((r,i) => `
+    <div class="hrow" data-i="${i}">
+      <div class="hname">${r.name}</div>
+      <div class="htrack baseline-x">
+        <div class="hbar" style="width:${(r.v/max*100).toFixed(2)}%;background:${colorFn(r)}"></div>
+        <div class="hval">${fmt(r.v)}</div>
+      </div>
+    </div>`).join("");
+  el.querySelectorAll(".hrow").forEach(row => {
+    const r = rows[+row.dataset.i];
+    row.addEventListener("mouseenter", e => showTip(e, tipFn(r)));
+    row.addEventListener("mousemove", moveTip);
+    row.addEventListener("mouseleave", hideTip);
+  });
+}
+
+hbars(document.getElementById("catbars"), DATA.cats,
+  r => GROUPS[r.g][1],
+  r => `<div class="t">${r.name} · ${GROUPS[r.g][0]}</div><div class="v">${fmt2(r.v)}</div><div class="t">${(r.v/DATA.total*100).toFixed(1)}% of June spend</div>`);
+
+hbars(document.getElementById("merchbars"), DATA.merch,
+  () => "var(--series-1)",
+  r => `<div class="t">${r.name}</div><div class="v">${fmt2(r.v)}</div>`);
+
+const tb = document.querySelector("#cattable tbody");
+tb.innerHTML = DATA.cats.map(r =>
+  `<tr><td>${r.name}</td><td>${GROUPS[r.g][0]}</td><td class="num">${fmt2(r.v)}</td><td class="num">${(r.v/DATA.total*100).toFixed(1)}%</td></tr>`).join("")
+  + `<tr><td><b>Total</b></td><td></td><td class="num"><b>${fmt2(DATA.total)}</b></td><td class="num">100%</td></tr>`;
+
+const daily = document.getElementById("daily"), dx = document.getElementById("dailyx");
+const dmax = Math.max(...DATA.daily.map(d => d.v));
+daily.innerHTML = DATA.daily.map((d,i) => `
+  <div class="colwrap"><div class="col" data-i="${i}" style="height:${Math.max(1.5,(d.v/dmax*100)).toFixed(2)}%"></div></div>`).join("");
+const peak = DATA.daily.reduce((a,b) => b.v > a.v ? b : a);
+const lbl = document.createElement("div");
+lbl.className = "peak-label";
+lbl.textContent = `Jun ${peak.d} · ${fmt(peak.v)}`;
+lbl.style.left = ((peak.d - 0.5) / DATA.daily.length * 100) + "%";
+lbl.style.top = "-22px";
+daily.appendChild(lbl);
+dx.innerHTML = DATA.daily.map(d => `<span>${d.d % 5 === 0 || d.d === 1 ? d.d : ""}</span>`).join("");
+daily.querySelectorAll(".col").forEach(c => {
+  const d = DATA.daily[+c.dataset.i];
+  c.addEventListener("mouseenter", e => showTip(e, `<div class="t">June ${d.d}, 2026</div><div class="v">${fmt2(d.v)}</div>`));
+  c.addEventListener("mousemove", moveTip);
+  c.addEventListener("mouseleave", hideTip);
+});
+</script>
+</body>
+</html>
