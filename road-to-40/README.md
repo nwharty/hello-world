@@ -1,6 +1,6 @@
 # Road to 40
 
-Personal life-plan tracker for Nathaniel Harty — six lanes (Financial, Career, Family, Health, Home, Personal) spanning age 37 (Sep 2026) to 40 (Sep 16, 2030), plus a live credit-card payoff and emergency-fund tracker.
+Personal life-plan tracker for Nathaniel Harty — six lanes (Financial, Career, Family, Health, Home, Personal) spanning age 37 (Sep 2026) to 40 (Sep 16, 2029), plus a live credit-card payoff and emergency-fund tracker.
 
 ## What this is
 
@@ -21,7 +21,7 @@ The live copy is a **private Claude artifact** (hosted on claude.ai, visible onl
 
 ## Layout
 
-- **Landing page**: headline stats (time to 40 in y/m/d, current phase, goals done, baby ETA → baby age after Nov 5 2026) + a journey timeline bar (Roots → Build → Reach → The Marker) + the six lane cards. No finance figures on the landing page at all.
+- **Landing page**: headline stats (time to 40 in y/m/d, current phase, goals done, baby ETA → baby age after Nov 5 2026) + a journey timeline bar across ages 37/38/39 (Roots → Build → Reach) + the six lane cards. No finance figures on the landing page at all.
 - **Financial lane**: yearly goals, then a **Debt payoff & emergency fund** section with the two card trackers, the windfall kill sequence, and the EF tracker.
 
 ## Storage
@@ -38,11 +38,13 @@ Saves are debounced (500ms) with automatic retries. Note: state is per-browser �
 
 ## Key facts baked into the code
 
+- Year blocks are the ages 37 (Sep 26–27), 38 (Sep 27–28), 39 (Sep 28–29), plus a “40 · The Marker” finish-line block; all timers count down to the 40th birthday, Sep 16 2029
+
 - Card 1: BoA ···3215, start balance $11,314.50, 0% promo dies **Oct 20, 2026** (then 19.49%)
 - Card 2: BofA/Merrill transfer, start balance $10,000, 0% promo dies **July 2027** (then 18.49%)
 - Windfall plan: Aug 15 2026 RSU (~$10K net) → Card 1; Sep 2026 bonus (~$10K net) → Card 2
 - Emergency fund target: editable, default $55,000
-- Baby ETA: ~Nov 5, 2026 · 40th birthday: Sep 16, 2030
+- Baby ETA: ~Nov 5, 2026 · 40th birthday: Sep 16, 2029
 
 ## Run locally
 
@@ -57,4 +59,4 @@ python3 -m http.server 8000
 - Export/import state as JSON (backup + move data between devices)
 - Net worth chart over time
 - Quarterly check-in notes per lane
-- Home equity loan payoff tracker (~$110K @ 7.44%, target $0 by Sep 2030)
+- Home equity loan payoff tracker (~$110K @ 7.44%, target $0 by Sep 2029)
