@@ -16,7 +16,8 @@
   --cash:#2E7D4F; --cash-deep:#1B4D33; --cliff:#C4472F;
   --amber:#C98A2D; --line:#D8DFD6; --muted:#6B7A6F;
   --fin:#2E7D4F; --car:#2C5F8A; --fam:#B0533A; --hea:#7A4E8C; --hom:#8A6D2C; --per:#3E7C7B;
-  --shadow:4px 4px 0 rgba(20,40,29,.12); --shadow-h:6px 6px 0 rgba(20,40,29,.16);
+  --shadow:0 1px 2px rgba(20,40,29,.05),0 12px 32px -14px rgba(20,40,29,.22);
+  --shadow-h:0 2px 4px rgba(20,40,29,.06),0 18px 44px -14px rgba(20,40,29,.30);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -25,7 +26,8 @@
     --cash:#5BBF8A; --cash-deep:#8FD9B0; --cliff:#F08A6E;
     --amber:#E3B05C; --line:#2C382F; --muted:#9AAB9F;
     --fin:#5BBF8A; --car:#7FB3E3; --fam:#EE9B7A; --hea:#C39BD9; --hom:#D9B36A; --per:#7FCBC8;
-    --shadow:4px 4px 0 rgba(0,0,0,.45); --shadow-h:6px 6px 0 rgba(0,0,0,.55);
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 12px 32px -14px rgba(0,0,0,.65);
+    --shadow-h:0 2px 4px rgba(0,0,0,.5),0 18px 44px -14px rgba(0,0,0,.75);
   }
 }
 :root[data-theme="dark"]{
@@ -34,48 +36,56 @@
   --cash:#5BBF8A; --cash-deep:#8FD9B0; --cliff:#F08A6E;
   --amber:#E3B05C; --line:#2C382F; --muted:#9AAB9F;
   --fin:#5BBF8A; --car:#7FB3E3; --fam:#EE9B7A; --hea:#C39BD9; --hom:#D9B36A; --per:#7FCBC8;
-  --shadow:4px 4px 0 rgba(0,0,0,.45); --shadow-h:6px 6px 0 rgba(0,0,0,.55);
+  --shadow:0 1px 2px rgba(0,0,0,.45),0 12px 32px -14px rgba(0,0,0,.65);
+  --shadow-h:0 2px 4px rgba(0,0,0,.5),0 18px 44px -14px rgba(0,0,0,.75);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif;padding:20px 14px 60px;max-width:880px;margin:0 auto}
+body{background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif;padding:28px 16px 64px;max-width:880px;margin:0 auto}
 .mono{font-family:'IBM Plex Mono',monospace}
 .eyebrow-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
 .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cash-deep)}
 h1{font-weight:900;font-size:clamp(26px,6vw,40px);line-height:1.02;letter-spacing:-.02em}
 h1 .zero{color:var(--cash)}
-.headline-stat{margin-top:14px;display:flex;gap:24px;flex-wrap:wrap;border-top:2px solid var(--ink);padding-top:12px;margin-bottom:22px}
+.headline-stat{margin-top:16px;display:flex;gap:26px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
 .hs .lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .hs .val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700}
 .hs .val.red{color:var(--cliff)} .hs .val.green{color:var(--cash)}
+.journey{margin:18px 0 26px}
+.journey .jtrack{position:relative;height:8px;background:var(--line);border-radius:999px;overflow:hidden}
+.journey .jfill{position:absolute;top:0;left:0;bottom:0;background:var(--cash);border-radius:999px;transition:width .5s ease}
+.journey .jtick{position:absolute;top:0;bottom:0;width:2px;background:var(--paper)}
+.journey .jlabels{display:flex;margin-top:7px}
+.journey .jlabels span{flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--muted)}
+.journey .jlabels span.on{color:var(--cash);font-weight:700}
 
-.panel{background:var(--panel);border:1.5px solid var(--ink);border-radius:10px;padding:18px 16px;margin-bottom:18px;box-shadow:var(--shadow)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 18px;margin-bottom:18px;box-shadow:var(--shadow)}
 .panel h2{font-size:15px;font-weight:900;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
 .panel h2 .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 
 /* Lane grid (home) */
 .lane-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:22px}
 .lane-card{
-  background:var(--panel);border:1.5px solid var(--ink);border-radius:10px;padding:16px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;
   cursor:pointer;box-shadow:var(--shadow);text-align:left;width:100%;
   font-family:'Archivo',sans-serif;color:var(--ink);
-  border-left:6px solid var(--lc,var(--ink));
-  transition:transform .12s ease;
+  border-left:5px solid var(--lc,var(--ink));
+  transition:transform .15s ease,box-shadow .15s ease;
 }
-.lane-card:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-h);background:var(--panel)}
+.lane-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-h);background:var(--panel)}
 .lane-card .name{font-weight:900;font-size:17px}
 .lane-card .prog{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:4px}
-.lane-card .bar{height:6px;background:var(--paper);border:1px solid var(--ink);border-radius:3px;margin-top:8px;overflow:hidden}
+.lane-card .bar{height:6px;background:var(--line);border-radius:999px;margin-top:10px;overflow:hidden}
 .lane-card .bar > div{height:100%;background:var(--lc,var(--cash))}
 
 /* Lane detail */
-.back{background:transparent;color:var(--ink);border:1.5px solid var(--ink);border-radius:6px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px;font-family:'Archivo',sans-serif}
+.back{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px;font-family:'Archivo',sans-serif}
 .back:hover{background:var(--panel)}
 .lane-title{font-weight:900;font-size:26px;margin-bottom:2px;border-left:8px solid var(--lc);padding-left:12px}
 .lane-sub{font-size:12px;color:var(--muted);margin-bottom:16px;padding-left:20px}
 .year-block{margin-bottom:16px}
 .year-head{
   display:flex;justify-content:space-between;align-items:baseline;
-  border-bottom:2px solid var(--ink);padding-bottom:4px;margin-bottom:6px;
+  border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:6px;
 }
 .year-head .y{font-weight:900;font-size:16px}
 .year-head .theme{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -85,12 +95,12 @@ h1 .zero{color:var(--cash)}
 .goal .txt:focus{background:var(--paper);outline:2px solid var(--lc)}
 .goal.done .txt{text-decoration:line-through;color:var(--muted)}
 .goal .del{background:none;border:none;color:var(--cliff);cursor:pointer;font-size:15px;padding:0 4px;flex-shrink:0}
-.addgoal{background:none;border:1.5px dashed var(--muted);color:var(--muted);border-radius:6px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;font-family:'Archivo',sans-serif;width:100%}
-.addgoal:hover{border-color:var(--ink);color:var(--ink)}
+.addgoal{background:none;border:1px dashed var(--line);color:var(--muted);border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;font-family:'Archivo',sans-serif;width:100%}
+.addgoal:hover{border-color:var(--muted);color:var(--ink)}
 .hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:10px}
 
 /* Section divider inside Financial lane */
-.sect-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;border-top:3px solid var(--ink);margin:28px 0 12px;padding-top:10px;font-weight:900;font-size:16px}
+.sect-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;border-top:1px solid var(--line);margin:32px 0 14px;padding-top:14px;font-weight:900;font-size:16px}
 .sect-head .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 
 /* Money tracker bits */
@@ -102,18 +112,18 @@ h1 .zero{color:var(--cash)}
 .countdown .sub{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
 .countdown.safe .days{color:var(--cash)}
 .runway{position:relative;height:38px;margin:14px 0 4px}
-.runway .track{position:absolute;inset:10px 0;background:var(--paper);border:1.5px solid var(--ink);border-radius:4px;overflow:hidden}
+.runway .track{position:absolute;inset:10px 0;background:var(--paper);border:1px solid var(--line);border-radius:999px;overflow:hidden}
 .runway .paid{position:absolute;top:0;left:0;bottom:0;background:var(--cash);background-image:repeating-linear-gradient(-45deg,rgba(255,255,255,.18) 0 6px,transparent 6px 12px);transition:width .5s ease}
 .runway .cliff-line{position:absolute;top:0;bottom:0;right:0;width:3px;background:var(--cliff)}
 .runway .cliff-flag{position:absolute;right:0;top:-4px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--cliff);letter-spacing:.06em}
 .runway-labels{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)}
 .log-form{display:flex;gap:8px;margin-top:14px}
-.log-form input{flex:1;font-family:'IBM Plex Mono',monospace;font-size:15px;padding:10px;border:1.5px solid var(--ink);border-radius:6px;background:var(--paper);min-width:0;color:var(--ink)}
+.log-form input{flex:1;font-family:'IBM Plex Mono',monospace;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);min-width:0;color:var(--ink)}
 .log-form input:focus{outline:3px solid var(--cash);outline-offset:1px}
-button.act{font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;background:var(--ink);color:var(--paper);border:none;border-radius:6px;padding:10px 16px;cursor:pointer}
+button.act{font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;background:var(--ink);color:var(--paper);border:none;border-radius:10px;padding:10px 16px;cursor:pointer}
 button.act:hover{background:var(--cash-deep)}
 button:focus-visible{outline:3px solid var(--cash);outline-offset:2px}
-button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink);border-radius:6px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Archivo',sans-serif}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:6px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Archivo',sans-serif}
 button.ghost:hover{background:var(--panel)}
 .history{margin-top:12px;border-top:1px dashed var(--line);padding-top:8px}
 .history-item{display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:5px 0;border-bottom:1px solid var(--line)}
@@ -130,8 +140,8 @@ button.ghost:hover{background:var(--panel)}
 .arrow{color:var(--cash);font-weight:900}
 .ef-target-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
 .ef-target-row label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
-.ef-target-row input{font-family:'IBM Plex Mono',monospace;font-size:15px;width:120px;padding:8px;border:1.5px solid var(--ink);border-radius:6px;background:var(--paper);color:var(--ink)}
-.phase-lock{font-size:12px;color:var(--muted);background:var(--paper);border:1px dashed var(--muted);border-radius:6px;padding:10px 12px;margin-top:10px}
+.ef-target-row input{font-family:'IBM Plex Mono',monospace;font-size:15px;width:120px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink)}
+.phase-lock{font-size:12px;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-top:10px}
 footer{margin-top:28px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-align:center;letter-spacing:.08em;text-transform:uppercase}
 
 /* Passcode gate */
@@ -139,7 +149,7 @@ footer{margin-top:28px;font-family:'IBM Plex Mono',monospace;font-size:10px;colo
 .gate .glyph{font-size:28px;text-align:center;margin-bottom:8px}
 .gate h2{font-size:18px;font-weight:900;text-align:center;justify-content:center}
 .gate .sub{font-size:12px;color:var(--muted);text-align:center;margin-top:4px}
-.gate input{width:100%;font-family:'IBM Plex Mono',monospace;font-size:16px;padding:12px;border:1.5px solid var(--ink);border-radius:6px;background:var(--paper);color:var(--ink);margin-top:12px}
+.gate input{width:100%;font-family:'IBM Plex Mono',monospace;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);margin-top:12px}
 .gate input:focus{outline:3px solid var(--cash);outline-offset:1px}
 .gate button.act{width:100%;margin-top:12px;padding:12px}
 .gate .err{color:var(--cliff);font-size:12px;font-weight:700;margin-top:8px;min-height:16px;text-align:center}
@@ -334,6 +344,34 @@ async function doSave(attempt){
 const fmt = n => '$' + n.toLocaleString('en-US',{maximumFractionDigits:0});
 const sum = a => a.reduce((x,p)=>x+p.amt,0);
 const daysTo = d => Math.max(0, Math.ceil((d-new Date())/(864e5)));
+const ROAD_START = new Date('2026-09-16');
+function ymdBetween(from, to){
+  // calendar-accurate years/months/days between two dates
+  if (to <= from) return { y:0, m:0, d:0 };
+  let anchor = new Date(from), y = 0, m = 0;
+  for(;;){ const t = new Date(anchor); t.setFullYear(t.getFullYear()+1); if (t <= to){ anchor = t; y++; } else break; }
+  for(;;){ const t = new Date(anchor); t.setMonth(t.getMonth()+1); if (t <= to){ anchor = t; m++; } else break; }
+  return { y, m, d: Math.ceil((to - anchor) / 864e5) };
+}
+function currentPhase(){
+  const now = new Date();
+  if (now < ROAD_START) return 'Runway';
+  const themes = ['Roots','Build','Reach','The Marker'];
+  const yr = new Date(ROAD_START);
+  for (const th of themes){
+    yr.setFullYear(yr.getFullYear()+1);
+    if (now < yr) return th;
+  }
+  return '40 🎉';
+}
+function babyStat(){
+  const now = new Date();
+  if (now < BABY) return { lbl:'Baby ETA', val:'~' + daysTo(BABY) + 'd' };
+  const days = Math.floor((now - BABY) / 864e5);
+  if (days < 60) return { lbl:'Baby age', val: days + 'd' };
+  const { y, m } = ymdBetween(BABY, now);
+  return { lbl:'Baby age', val: y > 0 ? `${y}y ${m}mo` : `${m}mo` };
+}
 const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 function laneProgress(id){
   let t=0,d=0;
@@ -408,11 +446,15 @@ function pageFooter(){
 }
 
 function renderHome(){
-  const t=state.tracker;
-  const debt = Math.max(0,START.c1-sum(t.payments.c1)) + Math.max(0,START.c2-sum(t.payments.c2));
   let done=0, total=0;
   for (const l of LANES) for (const y of ['y37','y38','y39','y40'])
     for (const g of state.lanes[l.id][y]){ total++; if(g.done) done++; }
+  const left = ymdBetween(new Date(), FORTIETH);
+  const baby = babyStat();
+  const phase = currentPhase();
+  const pct = Math.min(100, Math.max(0, (new Date() - ROAD_START) / (FORTIETH - ROAD_START) * 100));
+  const seg = pct >= 100 ? 3 : Math.min(3, Math.floor(pct / 25));
+  const themes = ['Roots','Build','Reach','The Marker'];
   return `
   <header>
     <div class="eyebrow-row">
@@ -421,10 +463,17 @@ function renderHome(){
     </div>
     <h1>ROAD TO <span class="zero">40.</span></h1>
     <div class="headline-stat">
-      <div class="hs"><div class="lbl">Days to 40</div><div class="val">${daysTo(FORTIETH).toLocaleString()}</div></div>
-      <div class="hs"><div class="lbl">Cards remaining</div><div class="val ${debt>0?'red':'green'}">${debt>0?fmt(debt):'$0 🎉'}</div></div>
+      <div class="hs"><div class="lbl">Time to 40</div><div class="val">${left.y}y ${left.m}m ${left.d}d</div></div>
+      <div class="hs"><div class="lbl">Phase</div><div class="val green">${phase}</div></div>
       <div class="hs"><div class="lbl">Goals done</div><div class="val green">${done}/${total}</div></div>
-      <div class="hs"><div class="lbl">Baby ETA</div><div class="val">~${daysTo(BABY)}d</div></div>
+      <div class="hs"><div class="lbl">${baby.lbl}</div><div class="val">${baby.val}</div></div>
+    </div>
+    <div class="journey" role="img" aria-label="Journey progress: ${pct.toFixed(1)}% of the road to 40">
+      <div class="jtrack">
+        <div class="jfill" style="width:${pct}%"></div>
+        <div class="jtick" style="left:25%"></div><div class="jtick" style="left:50%"></div><div class="jtick" style="left:75%"></div>
+      </div>
+      <div class="jlabels">${themes.map((th,i)=>`<span class="${pct>0&&i===seg?'on':''}">${th}</span>`).join('')}</div>
     </div>
   </header>
   <div class="lane-grid">

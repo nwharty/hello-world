@@ -21,7 +21,7 @@ The live copy is a **private Claude artifact** (hosted on claude.ai, visible onl
 
 ## Layout
 
-- **Landing page**: headline stats (days to 40, cards remaining, goals done, baby ETA) + the six lane cards. No detailed finance panels here.
+- **Landing page**: headline stats (time to 40 in y/m/d, current phase, goals done, baby ETA → baby age after Nov 5 2026) + a journey timeline bar (Roots → Build → Reach → The Marker) + the six lane cards. No finance figures on the landing page at all.
 - **Financial lane**: yearly goals, then a **Debt payoff & emergency fund** section with the two card trackers, the windfall kill sequence, and the EF tracker.
 
 ## Storage
