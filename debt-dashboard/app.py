@@ -15,6 +15,9 @@ import pdf_report
 
 STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 PORT = int(os.environ.get("DEBT_PORT", "8642"))
+# Default: this machine only. Set DEBT_HOST=0.0.0.0 to reach the app from
+# other devices on your home network (e.g. a phone browser).
+HOST = os.environ.get("DEBT_HOST", "127.0.0.1")
 
 DEBT_FIELDS = ["name", "kind", "balance", "apr", "promo_apr", "promo_end", "min_payment",
                "term_months", "origination_date", "original_principal", "payoff_plan"]
@@ -275,8 +278,9 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     db.init()
-    server = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-    print(f"Debt Payoff Command Center → http://127.0.0.1:{PORT}")
+    server = ThreadingHTTPServer((HOST, PORT), Handler)
+    print(f"Debt Payoff Command Center → http://{'127.0.0.1' if HOST == '0.0.0.0' else HOST}:{PORT}"
+          + (" (also reachable from other devices on your network)" if HOST == "0.0.0.0" else ""))
     server.serve_forever()
 
 
