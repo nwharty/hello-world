@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='13' font-size='13'%3E%F0%9F%93%89%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<title>Debt Payoff — Command Center</title>
+<style>
+:root {
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11,11,11,0.10);
+  --series-1: #2a78d6;
+  --series-2: #1baf7a;
+  --series-3: #eda100;
+  --good: #0ca30c;
+  --good-text: #006300;
+  --warning: #fab219;
+  --critical: #d03b3b;
+  --accent: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7;
+    --muted: #898781; --grid: #2c2c2a; --axis: #383835;
+    --border: rgba(255,255,255,0.10);
+    --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500;
+    --good-text: #0ca30c; --accent: #3987e5;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7;
+  --muted: #898781; --grid: #2c2c2a; --axis: #383835;
+  --border: rgba(255,255,255,0.10);
+  --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500;
+  --good-text: #0ca30c; --accent: #3987e5;
+}
+:root[data-theme="light"] {
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e;
+  --muted: #898781; --grid: #e1e0d9; --axis: #c3c2b7;
+  --border: rgba(11,11,11,0.10);
+  --series-1: #2a78d6; --series-2: #1baf7a; --series-3: #eda100;
+  --good-text: #006300; --accent: #2a78d6;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--page); color: var(--ink);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  -webkit-text-size-adjust: 100%;
+}
+main { max-width: 640px; margin: 0 auto; padding: 14px 14px 24px; }
+h1 {
+  font-size: 17px; font-weight: 700; margin: 6px 2px 2px;
+  display: flex; align-items: baseline; gap: 8px;
+}
+h1 small { color: var(--muted); font-weight: 500; font-size: 13px; }
+h2 { font-size: 14px; margin: 0 0 10px; }
+.hint { color: var(--muted); font-size: 12.5px; margin: 4px 0 10px; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 16px; margin: 12px 0;
+}
+
+/* Home summary */
+.hero { padding: 18px 16px 14px; }
+.hero .label { color: var(--ink-2); font-size: 13px; }
+.hero .value { font-size: 44px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; }
+.goal-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 5px 11px; font-size: 12.5px; color: var(--ink-2); background: var(--page);
+}
+.chip b { color: var(--ink); font-weight: 600; }
+.chip .ok { color: var(--good-text); font-weight: 700; }
+.chip .risk { color: var(--critical); font-weight: 700; }
+
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; }
+.stat .label { color: var(--ink-2); font-size: 12px; }
+.stat .value { font-size: 20px; font-weight: 650; margin-top: 1px; }
+.stat .delta { font-size: 12px; color: var(--ink-2); }
+.stat .delta.good { color: var(--good-text); }
+.stat .delta.bad { color: var(--critical); }
+
+.alert {
+  display: flex; gap: 9px; align-items: flex-start;
+  border: 1px solid var(--border); border-left: 4px solid var(--muted);
+  background: var(--surface); border-radius: 12px;
+  padding: 10px 12px; margin: 10px 0; font-size: 13.5px;
+}
+.alert .badge { font-weight: 700; font-size: 10.5px; letter-spacing: 0.05em; white-space: nowrap; padding-top: 3px; }
+.alert.critical { border-left-color: var(--critical); }
+.alert.critical .badge { color: var(--critical); }
+.alert.warning { border-left-color: var(--warning); }
+.alert.good { border-left-color: var(--good); }
+.alert.good .badge { color: var(--good-text); }
+
+/* Tables */
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th {
+  text-align: left; color: var(--muted); font-weight: 500; font-size: 11.5px;
+  border-bottom: 1px solid var(--grid); padding: 5px 8px 5px 0; white-space: nowrap;
+}
+.table td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--grid); }
+.table tr:last-child td { border-bottom: 0; }
+.table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.table th.num { text-align: right; }
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px; }
+.ok-mark { color: var(--good-text); font-weight: 600; white-space: nowrap; }
+.risk-mark { color: var(--critical); font-weight: 600; white-space: nowrap; }
+.swatch { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+
+/* Chart */
+.chart { position: relative; margin: 0 -6px; }
+.chart svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; padding: 8px 6px 0; font-size: 12px; color: var(--ink-2); }
+.legend .key { display: inline-flex; align-items: center; gap: 6px; }
+.tooltip {
+  position: fixed; z-index: 20; pointer-events: none;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+  padding: 7px 11px; font-size: 12px; min-width: 140px;
+}
+.tooltip .tt-title { color: var(--muted); margin-bottom: 3px; }
+.tooltip .tt-row { display: flex; align-items: center; gap: 8px; padding: 1px 0; }
+.tooltip .tt-val { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tooltip .tt-name { color: var(--ink-2); }
+
+/* Forms */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+.form-grid .wide { grid-column: 1 / -1; }
+.field label { display: block; font-size: 11.5px; color: var(--ink-2); margin-bottom: 3px; }
+input, select {
+  width: 100%; padding: 9px 10px; font: inherit; font-size: 16px;
+  color: var(--ink); background: var(--page);
+  border: 1px solid var(--border); border-radius: 10px;
+  appearance: none; -webkit-appearance: none;
+}
+input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+.btn {
+  display: inline-block; border: 0; border-radius: 10px; cursor: pointer;
+  background: var(--ink); color: var(--surface); font: inherit; font-size: 14px;
+  font-weight: 600; padding: 10px 16px; text-decoration: none;
+}
+.btn.ghost { background: none; color: var(--ink); border: 1px solid var(--border); font-weight: 500; }
+.btn.small { padding: 6px 12px; font-size: 13px; }
+.btn.danger { background: none; border: 1px solid var(--border); color: var(--critical); }
+.row-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+details.block { border: 1px solid var(--border); border-radius: 12px; margin: 10px 0; background: var(--surface); }
+details.block summary {
+  padding: 11px 14px; font-weight: 600; font-size: 14px; cursor: pointer;
+  list-style: none; display: flex; align-items: center; gap: 8px;
+}
+details.block summary::after { content: "+"; margin-left: auto; color: var(--muted); font-weight: 500; }
+details.block[open] summary::after { content: "–"; }
+details.block .inner { padding: 2px 14px 14px; }
+summary .sub { color: var(--muted); font-weight: 400; font-size: 12.5px; }
+
+.picker { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px; }
+.picker .chip { cursor: pointer; user-select: none; }
+.picker .chip.on { color: var(--ink); border-color: var(--axis); background: var(--surface); font-weight: 500; }
+
+/* Bottom tab bar */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+  display: flex; justify-content: space-around;
+  background: var(--surface); border-top: 1px solid var(--border);
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+}
+.tabbar button {
+  border: 0; background: none; color: var(--muted); font: inherit; font-size: 11px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 4px 14px; border-radius: 10px; cursor: pointer; min-width: 64px;
+}
+.tabbar button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tabbar button.active { color: var(--accent); font-weight: 600; }
+.tab { display: none; }
+.tab.active { display: block; }
+
+.toast {
+  position: fixed; bottom: calc(84px + env(safe-area-inset-bottom)); left: 50%;
+  transform: translateX(-50%); z-index: 30;
+  background: var(--ink); color: var(--surface); border-radius: 10px;
+  padding: 9px 16px; font-size: 13.5px; white-space: nowrap;
+}
+
+/* Report (print) view */
+#report-view { display: none; }
+body.reporting main, body.reporting .tabbar { display: none; }
+body.reporting { padding-bottom: 0; }
+body.reporting #report-view { display: block; max-width: 640px; margin: 0 auto; padding: 20px 18px; }
+#report-view h1 { font-size: 22px; margin: 0; display: block; }
+#report-view .rsec { margin: 16px 0; }
+#report-view .rlabel { font-size: 11px; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; margin-bottom: 6px; }
+#report-view hr { border: 0; border-top: 1px solid var(--grid); margin: 14px 0; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  main, .tabbar, .toast, .tooltip { display: none !important; }
+  #report-view { display: block !important; }
+  .no-print { display: none !important; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tab.active { animation: rise 0.18s ease-out; }
+  @keyframes rise { from { opacity: 0.4; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+}
+</style>
+
+<main>
+  <h1>Debt Payoff <small>Command Center</small></h1>
+
+  <section id="tab-home" class="tab active">
+    <div id="home-alerts"></div>
+    <div class="card hero">
+      <div class="label">Total debt today</div>
+      <div class="value" id="hero-total">—</div>
+      <div class="goal-chips" id="goal-chips"></div>
+    </div>
+    <div class="stat-row" id="home-stats"></div>
+    <div class="card">
+      <h2>Trajectory — actual vs. plan</h2>
+      <div id="home-chart" class="chart"></div>
+    </div>
+    <div class="card">
+      <h2>Debts</h2>
+      <div class="scroll-x"><table class="table" id="home-debts"></table></div>
+    </div>
+    <div class="card">
+      <h2>Upcoming income events</h2>
+      <table class="table" id="home-events"></table>
+    </div>
+    <div class="row-actions">
+      <button class="btn ghost" id="report-btn">Monthly report (print / save PDF)</button>
+    </div>
+  </section>
+
+  <section id="tab-plans" class="tab">
+    <div class="card">
+      <h2>Compare scenarios</h2>
+      <p class="hint">Baseline (minimum payments only) is always included. Tap a chip to compare up to three. ★ marks the plan that drives Home.</p>
+      <div class="picker" id="plan-picker"></div>
+      <div id="plan-chart" class="chart"></div>
+      <div class="scroll-x"><table class="table" id="plan-table"></table></div>
+    </div>
+    <div class="card">
+      <h2>Edit scenarios</h2>
+      <div id="plan-editor"></div>
+    </div>
+  </section>
+
+  <section id="tab-log" class="tab">
+    <div class="card">
+      <h2>Record a monthly snapshot</h2>
+      <p class="hint">Enter real balances; history is logged and charted against the plan. Re-saving a date overwrites it.</p>
+      <form id="snap-form" class="form-grid"></form>
+    </div>
+    <div class="card">
+      <h2>History</h2>
+      <div class="scroll-x"><table class="table" id="snap-history"></table></div>
+    </div>
+  </section>
+
+  <section id="tab-setup" class="tab">
+    <div class="card">
+      <h2>Household settings</h2>
+      <p class="hint">“Monthly surplus” is what’s left after all regular bills and minimum payments — it funds extra principal. The post-baby value applies from the baby date onward.</p>
+      <form id="settings-form" class="form-grid"></form>
+    </div>
+    <div class="card">
+      <h2>Debts</h2>
+      <div id="debts-editor"></div>
+    </div>
+    <div class="card">
+      <h2>Income events (RSU vests, bonuses)</h2>
+      <p class="hint">“To debt” goes straight to that balance in the event’s month; the rest lands in cash.</p>
+      <div id="events-editor"></div>
+    </div>
+    <div class="card">
+      <h2>Your data</h2>
+      <p class="hint">Everything lives in this browser only (localStorage) — nothing is sent anywhere. Back up before clearing Safari data or switching devices.</p>
+      <div class="row-actions">
+        <button class="btn ghost" id="export-btn">Export backup</button>
+        <label class="btn ghost" style="cursor:pointer">Import backup<input type="file" id="import-file" accept=".json" hidden></label>
+        <button class="btn danger" id="reset-btn">Reset to seed data</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="report-view"></div>
+
+<nav class="tabbar" id="tabbar">
+  <button data-tab="home" class="active" aria-label="Home">
+    <svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7"/><path d="M6 10v9h12v-9"/></svg>Home</button>
+  <button data-tab="plans" aria-label="Scenarios">
+    <svg viewBox="0 0 24 24"><path d="M4 19 10 12l4 3 6-8"/><path d="M4 5v14h16"/></svg>Plans</button>
+  <button data-tab="log" aria-label="Snapshots">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Log</button>
+  <button data-tab="setup" aria-label="Setup">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/></svg>Setup</button>
+</nav>
+
+<div id="tooltip" class="tooltip" hidden></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+"use strict";
+/* ============================== state ============================== */
+const LS_KEY = "debt-command-center-v1";
+
+const SEED = {
+  settings: {
+    cash_on_hand: 20000, emergency_floor: 15000,
+    monthly_surplus: 3000, monthly_surplus_after_baby: 1500,
+    baby_date: "2026-11-01", cc_goal_date: "2026-09-16", loan_goal_date: "2029-09-30",
+  },
+  debts: [
+    { id: 1, name: "Card 1 (BoA)", kind: "card", balance: 11300, apr: 24.99,
+      promo_apr: 0, promo_end: "2026-10-01", min_payment: 115,
+      term_months: null, origination_date: null, original_principal: null,
+      payoff_plan: "Pay off with August 2026 RSU vest" },
+    { id: 2, name: "Card 2", kind: "card", balance: 10000, apr: 24.99,
+      promo_apr: 0, promo_end: "2027-07-01", min_payment: 100,
+      term_months: null, origination_date: null, original_principal: null,
+      payoff_plan: "Pay off with September 2026 bonus" },
+    { id: 3, name: "Home equity loan", kind: "loan", balance: 110000, apr: 7.44,
+      promo_apr: null, promo_end: null, min_payment: null,
+      term_months: 240, origination_date: "2026-05-01", original_principal: 110000,
+      payoff_plan: "Extra principal + lump sums; goal Sept 2029" },
+  ],
+  events: [
+    { id: 1, name: "August RSU vest", kind: "rsu", event_date: "2026-08-15",
+      amount: 12000, allocate_debt_id: 1, allocate_amount: 11300 },
+    { id: 2, name: "September bonus", kind: "bonus", event_date: "2026-09-15",
+      amount: 11000, allocate_debt_id: 2, allocate_amount: 10000 },
+  ],
+  scenarios: [
+    { id: 1, name: "Plan: lump sums at vest/bonus", extra_monthly: 0,
+      use_income_events: 1, is_plan: 1, lumps: [] },
+    { id: 2, name: "Plan + $500/mo extra to loan", extra_monthly: 500,
+      use_income_events: 1, is_plan: 0, lumps: [] },
+    { id: 3, name: "Plan + $1,000/mo extra to loan", extra_monthly: 1000,
+      use_income_events: 1, is_plan: 0, lumps: [] },
+  ],
+  snapshots: [],       // {snap_date, debt_id, balance}
+  cashSnapshots: [],   // {snap_date, cash}
+};
+
+let db;
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    db = raw ? JSON.parse(raw) : structuredClone(SEED);
+  } catch (e) { db = structuredClone(SEED); }
+}
+function save() { localStorage.setItem(LS_KEY, JSON.stringify(db)); }
+function nextId(list) { return list.reduce((m, x) => Math.max(m, x.id), 0) + 1; }
+
+/* ============================== engine ============================== */
+const MAX_MONTHS = 600;
+const monthStart = (d) => new Date(d.getFullYear(), d.getMonth(), 1);
+const addMonths = (d, n) => new Date(d.getFullYear(), d.getMonth() + n, 1);
+const monthKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+const parseDate = (s) => { const [y, m, day] = s.split("-").map(Number); return new Date(y, m - 1, day || 1); };
+
+function annuityPayment(principal, apr, term) {
+  const r = apr / 100 / 12;
+  return r === 0 ? principal / term : principal * r / (1 - Math.pow(1 + r, -term));
+}
+function scheduledPayment(debt, balance, rate) {
+  if (debt.kind === "loan") {
+    if (debt.min_payment != null) return debt.min_payment;
+    if (debt.term_months)
+      return annuityPayment(debt.original_principal || debt.balance, debt.apr, debt.term_months);
+  }
+  const floor = debt.min_payment != null ? debt.min_payment : 25;
+  return Math.max(floor, balance * (0.01 + rate)); // issuer-style: interest + 1% of balance
+}
+function monthlyRate(debt, month) {
+  if (debt.promo_end && debt.promo_apr != null && month < monthStart(parseDate(debt.promo_end)))
+    return debt.promo_apr / 100 / 12;
+  return debt.apr / 100 / 12;
+}
+
+function simulate(scenario) {
+  const s = db.settings, debts = db.debts;
+  const start = monthStart(new Date());
+  const floor = +s.emergency_floor || 0;
+  const surplus = +s.monthly_surplus || 0;
+  const surplusAfter = s.monthly_surplus_after_baby !== "" && s.monthly_surplus_after_baby != null
+    ? +s.monthly_surplus_after_baby : surplus;
+  const babyMonth = s.baby_date ? monthStart(parseDate(s.baby_date)) : null;
+
+  const bal = {}, interest = {}, payoff = {};
+  for (const d of debts) { bal[d.id] = +d.balance; interest[d.id] = 0; payoff[d.id] = null; }
+  let cash = +s.cash_on_hand || 0;
+
+  const eventsByMonth = {};
+  if (scenario.use_income_events)
+    for (const ev of db.events)
+      (eventsByMonth[monthKey(monthStart(parseDate(ev.event_date)))] ||= []).push(ev);
+  const lumpsByMonth = {};
+  for (const l of scenario.lumps || [])
+    (lumpsByMonth[monthKey(monthStart(parseDate(l.lump_date)))] ||= []).push(l);
+
+  const loanIds = debts.filter((d) => d.kind === "loan").map((d) => d.id);
+  const byId = Object.fromEntries(debts.map((d) => [d.id, d]));
+  const pay = (id, amt) => {
+    if (id == null || !(bal[id] > 0.005)) return 0;
+    const applied = Math.min(amt, bal[id]);
+    bal[id] -= applied;
+    return applied;
+  };
+  const targets = (preferred) => {
+    const order = debts.filter((d) => bal[d.id] > 0.005).map((d) => d.id)
+      .sort((a, b) => byId[b].apr - byId[a].apr);
+    if (preferred != null && order.includes(preferred)) {
+      order.splice(order.indexOf(preferred), 1);
+      order.unshift(preferred);
+    }
+    return order;
+  };
+
+  const monthly = [], violations = [];
+  for (let step = 0; step < MAX_MONTHS; step++) {
+    const month = addMonths(start, step), mk = monthKey(month);
+    let interestThisMonth = 0;
+    for (const d of debts) {
+      if (bal[d.id] <= 0.005) continue;
+      const rate = monthlyRate(d, month), pre = bal[d.id], int = pre * rate;
+      bal[d.id] += int; interest[d.id] += int; interestThisMonth += int;
+      pay(d.id, scheduledPayment(d, pre, rate));
+    }
+    let extraPaid = 0, remaining = +scenario.extra_monthly || 0;
+    for (const t of targets(loanIds[0])) {
+      if (remaining <= 0) break;
+      const applied = pay(t, remaining);
+      remaining -= applied; extraPaid += applied;
+    }
+    for (const ev of eventsByMonth[mk] || []) {
+      const alloc = Math.min(+ev.allocate_amount || 0, +ev.amount);
+      const applied = pay(ev.allocate_debt_id, alloc);
+      cash += +ev.amount - applied;
+    }
+    let lumpPaid = 0;
+    for (const l of lumpsByMonth[mk] || []) {
+      let rem = +l.amount;
+      for (const t of targets(l.debt_id ?? loanIds[0])) {
+        if (rem <= 0) break;
+        const applied = pay(t, rem);
+        rem -= applied; lumpPaid += applied;
+      }
+    }
+    cash += (babyMonth && month >= babyMonth ? surplusAfter : surplus) - extraPaid - lumpPaid;
+    if (cash < floor) violations.push({ month: mk, cash: Math.round(cash), floor });
+    for (const d of debts)
+      if (bal[d.id] <= 0.005 && payoff[d.id] == null) { bal[d.id] = 0; payoff[d.id] = mk; }
+    monthly.push({
+      month: mk,
+      total: Math.round(Object.values(bal).reduce((a, b) => a + b, 0) * 100) / 100,
+      bal: Object.fromEntries(debts.map((d) => [d.id, Math.round(bal[d.id] * 100) / 100])),
+      cash: Math.round(cash),
+    });
+    if (debts.every((d) => bal[d.id] <= 0.005)) break;
+  }
+  return {
+    scenario, monthly, violations,
+    payoff, interest,
+    totalInterest: Math.round(Object.values(interest).reduce((a, b) => a + b, 0)),
+    months: monthly.length,
+    debtFree: monthly.length && monthly[monthly.length - 1].total <= 0.005
+      ? monthly[monthly.length - 1].month : null,
+    minCash: monthly.length ? Math.min(...monthly.map((m) => m.cash)) : null,
+  };
+}
+const BASELINE = { id: 0, name: "Minimum payments only", extra_monthly: 0, use_income_events: 0, lumps: [] };
+
+function promoAlerts(sim) {
+  const alerts = [];
+  for (const d of db.debts) {
+    if (!d.promo_end || d.promo_apr == null) continue;
+    const promoMonth = monthKey(monthStart(parseDate(d.promo_end)));
+    const payoff = sim.payoff[d.id];
+    let residual = null;
+    for (const row of sim.monthly) if (row.month < promoMonth) residual = row.bal[d.id];
+    if (residual == null) residual = +d.balance;
+    if (payoff == null || payoff >= promoMonth) {
+      const mi = residual * d.apr / 100 / 12;
+      alerts.push({ level: "critical",
+        message: `${d.name}: projected ${fmtMoney(residual)} still owed when the 0% promo ends ` +
+                 `${fmtMonth(promoMonth)} — interest would start at ~${fmtMoney(mi)}/mo at ${d.apr}% APR.` });
+    } else if (monthKey(addMonths(parseDate(payoff + "-01"), 1)) >= promoMonth) {
+      alerts.push({ level: "warning",
+        message: `${d.name}: payoff lands ${fmtMonth(payoff)}, the last month before the promo ` +
+                 `deadline ${fmtMonth(promoMonth)} — no slack if the plan slips.` });
+    }
+  }
+  return alerts;
+}
+function goalStatus(sim) {
+  const out = [], s = db.settings;
+  const check = (kind, label, due) => {
+    if (!due) return;
+    const goalM = monthKey(monthStart(parseDate(due)));
+    const payoffs = db.debts.filter((d) => d.kind === kind).map((d) => sim.payoff[d.id]);
+    const met = payoffs.length > 0 && payoffs.every((p) => p != null && p <= goalM);
+    const latest = payoffs.filter(Boolean).sort().pop() || null;
+    out.push({ goal: label, due, projected: latest, on_track: met });
+  };
+  check("card", "Cards at $0", s.cc_goal_date);
+  check("loan", "Loan paid off", s.loan_goal_date);
+  return out;
+}
+function planScenario() { return db.scenarios.find((s) => s.is_plan) || BASELINE; }
+
+/* ============================== formatting ============================== */
+const fmtMoney = (v) => v == null ? "—" :
+  (v < 0 ? "-$" : "$") + Math.abs(Math.round(v)).toLocaleString("en-US");
+const MONTHS_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmtMonth = (mk) => {
+  if (!mk) return "—";
+  const [y, m] = mk.split("-");
+  return `${MONTHS_ABBR[+m - 1]} ${y}`;
+};
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const palette = () => [cssVar("--series-1"), cssVar("--series-2"), cssVar("--series-3")];
+const num = (v) => (v === "" || v == null ? null : +v);
+const todayISO = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => (t.hidden = true), 2000);
+}
+const $ = (sel, el = document) => el.querySelector(sel);
+
+/* ============================== line chart ============================== */
+function lineChart(container, series, { height = 300 } = {}) {
+  container.innerHTML = "";
+  const months = [...new Set(series.flatMap((s) => [...s.points.keys()]))].sort();
+  if (!months.length) { container.innerHTML = '<p class="hint">No data yet.</p>'; return; }
+  const W = 720, H = height, padL = 56, padR = 12, padT = 12, padB = 26;
+  const iw = W - padL - padR, ih = H - padT - padB;
+  const vals = series.flatMap((s) => [...s.points.values()]).filter((v) => v != null);
+  let yMax = Math.max(...vals, 1);
+  const stepSize = niceStep(yMax / 4);
+  yMax = Math.ceil(yMax / stepSize) * stepSize;
+  const x = (i) => padL + (months.length === 1 ? iw / 2 : (i / (months.length - 1)) * iw);
+  const y = (v) => padT + ih - (v / yMax) * ih;
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const add = (tag, attrs, text) => {
+    const el = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    if (text != null) el.textContent = text;
+    svg.appendChild(el);
+    return el;
+  };
+  for (let v = 0; v <= yMax; v += stepSize) {
+    add("line", { x1: padL, x2: W - padR, y1: y(v), y2: y(v), stroke: cssVar("--grid"), "stroke-width": 1 });
+    add("text", { x: padL - 7, y: y(v) + 4, "text-anchor": "end", "font-size": 12,
+      fill: cssVar("--muted"), style: "font-variant-numeric: tabular-nums" },
+      "$" + compact(v));
+  }
+  const xEvery = Math.max(1, Math.round(months.length / 4));
+  months.forEach((mk, i) => {
+    const last = i === months.length - 1;
+    if (i % xEvery !== 0 && !last) return;
+    if (last && months.length > 1 && (months.length - 1) % xEvery < xEvery / 2 && i % xEvery !== 0) return;
+    add("text", { x: x(i), y: H - 6, "font-size": 12, fill: cssVar("--muted"),
+      "text-anchor": last ? "end" : i === 0 ? "start" : "middle" }, fmtMonth(mk));
+  });
+  add("line", { x1: padL, x2: W - padR, y1: y(0), y2: y(0), stroke: cssVar("--axis"), "stroke-width": 1 });
+  for (const s of series) {
+    let d = "", pen = false;
+    months.forEach((mk, i) => {
+      const v = s.points.get(mk);
+      if (v == null) { pen = false; return; }
+      d += `${pen ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`;
+      pen = true;
+    });
+    add("path", { d, fill: "none", stroke: s.color, "stroke-width": 2,
+      "stroke-linejoin": "round", "stroke-linecap": "round" });
+    if (s.markers)
+      months.forEach((mk, i) => {
+        const v = s.points.get(mk);
+        if (v != null) add("circle", { cx: x(i), cy: y(v), r: 4.5, fill: s.color,
+          stroke: cssVar("--surface"), "stroke-width": 2 });
+      });
+  }
+  const cross = add("line", { y1: padT, y2: padT + ih, stroke: cssVar("--axis"),
+    "stroke-width": 1, visibility: "hidden" });
+  const hover = add("rect", { x: padL, y: padT, width: iw, height: ih, fill: "transparent" });
+  const tip = document.getElementById("tooltip");
+  hover.addEventListener("pointermove", (evt) => {
+    const rect = svg.getBoundingClientRect();
+    const px = ((evt.clientX - rect.left) / rect.width) * W;
+    const i = Math.max(0, Math.min(months.length - 1,
+      Math.round(((px - padL) / iw) * (months.length - 1))));
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i));
+    cross.setAttribute("visibility", "visible");
+    tip.innerHTML = "";
+    const title = document.createElement("div");
+    title.className = "tt-title"; title.textContent = fmtMonth(months[i]);
+    tip.appendChild(title);
+    for (const s of series) {
+      const v = s.points.get(months[i]);
+      if (v == null) continue;
+      const row = document.createElement("div"); row.className = "tt-row";
+      const key = document.createElement("span"); key.className = "swatch"; key.style.background = s.color;
+      const name = document.createElement("span"); name.className = "tt-name"; name.textContent = s.name;
+      const val = document.createElement("span"); val.className = "tt-val"; val.textContent = fmtMoney(v);
+      row.append(key, name, val); tip.appendChild(row);
+    }
+    tip.hidden = false;
+    const tw = tip.offsetWidth;
+    const left = evt.clientX + 12 + tw > innerWidth ? Math.max(4, evt.clientX - tw - 12) : evt.clientX + 12;
+    tip.style.left = left + "px";
+    tip.style.top = Math.max(8, evt.clientY - 46) + "px";
+  });
+  hover.addEventListener("pointerleave", () => {
+    tip.hidden = true; cross.setAttribute("visibility", "hidden");
+  });
+  container.appendChild(svg);
+  if (series.length >= 2) {
+    const legend = document.createElement("div"); legend.className = "legend";
+    for (const s of series) {
+      const key = document.createElement("span"); key.className = "key";
+      const sw = document.createElement("span"); sw.className = "swatch"; sw.style.background = s.color;
+      const label = document.createElement("span"); label.textContent = s.name;
+      key.append(sw, label); legend.appendChild(key);
+    }
+    container.appendChild(legend);
+  }
+}
+function niceStep(raw) {
+  const mag = Math.pow(10, Math.floor(Math.log10(Math.max(raw, 1))));
+  for (const m of [1, 2, 2.5, 5, 10]) if (raw <= m * mag) return m * mag;
+  return 10 * mag;
+}
+const compact = (v) => v >= 1000 ? (v / 1000) % 1 === 0 ? v / 1000 + "K" : (v / 1000).toFixed(1) + "K" : String(v);
+
+/* ============================== home ============================== */
+function renderHome() {
+  const sim = simulate(planScenario());
+  const base = simulate(BASELINE);
+  const goals = goalStatus(sim);
+  const alerts = promoAlerts(sim);
+  const total = db.debts.reduce((a, d) => a + +d.balance, 0);
+  $("#hero-total").textContent = fmtMoney(total);
+
+  const box = $("#home-alerts");
+  box.innerHTML = "";
+  const all = [...alerts];
+  if (sim.violations.length)
+    all.push({ level: "warning",
+      message: `Baby buffer: planned payments drop cash below ${fmtMoney(sim.violations[0].floor)} in ` +
+        `${sim.violations.length} month(s) — first ${fmtMonth(sim.violations[0].month)} at ${fmtMoney(sim.violations[0].cash)}.` });
+  for (const g of goals.filter((g) => !g.on_track))
+    all.push({ level: "critical",
+      message: `Goal at risk: ${g.goal} by ${g.due} — projected ${fmtMonth(g.projected)}.` });
+  if (!all.length)
+    all.push({ level: "good", message: "All clear — promos covered, goals on track, cash above the floor." });
+  for (const a of all) {
+    const el = document.createElement("div"); el.className = "alert " + a.level;
+    const badge = document.createElement("span"); badge.className = "badge";
+    badge.textContent = { critical: "⚠ ALERT", warning: "△ WATCH", good: "✓ ON TRACK" }[a.level];
+    const msg = document.createElement("span"); msg.textContent = a.message;
+    el.append(badge, msg); box.appendChild(el);
+  }
+
+  $("#goal-chips").innerHTML = goals.map((g) => `
+    <span class="chip">${g.on_track ? '<span class="ok">✓</span>' : '<span class="risk">✗</span>'}
+      ${esc(g.goal)} <b>${fmtMonth(g.projected)}</b> <span>(goal ${fmtMonth(g.due.slice(0, 7))})</span></span>`).join("");
+
+  const saved = base.totalInterest - sim.totalInterest;
+  const floor = +db.settings.emergency_floor || 0;
+  $("#home-stats").innerHTML = `
+    <div class="stat"><div class="label">Interest saved vs minimums</div>
+      <div class="value">${fmtMoney(saved)}</div>
+      <div class="delta ${saved > 0 ? "good" : ""}">${base.months - sim.months} months cut</div></div>
+    <div class="stat"><div class="label">Lowest projected cash</div>
+      <div class="value">${fmtMoney(sim.minCash)}</div>
+      <div class="delta ${sim.minCash >= floor ? "good" : "bad"}">floor ${fmtMoney(floor)}</div></div>`;
+
+  const [c1, c2] = palette();
+  const planPts = new Map(sim.monthly.map((m) => [m.month, m.total]));
+  const byDate = {};
+  for (const s of db.snapshots) (byDate[s.snap_date] ||= 0), (byDate[s.snap_date] += +s.balance);
+  const actualPts = new Map(Object.entries(byDate).sort().map(([d, t]) => [d.slice(0, 7), t]));
+  const series = [{ name: "Plan (projected)", color: c1, points: planPts }];
+  if (actualPts.size) series.push({ name: "Actual (snapshots)", color: c2, points: actualPts, markers: true });
+  lineChart($("#home-chart"), series);
+
+  $("#home-debts").innerHTML =
+    `<tr><th>Debt</th><th class="num">Balance</th><th>Rate</th><th>Promo ends</th><th>Payoff</th></tr>` +
+    db.debts.map((d) => `<tr>
+      <td>${esc(d.name)}</td><td class="num">${fmtMoney(d.balance)}</td>
+      <td>${d.promo_end ? `0% → ${d.apr}%` : d.apr + "%"}</td>
+      <td>${d.promo_end ? fmtMonth(d.promo_end.slice(0, 7)) : "—"}</td>
+      <td>${fmtMonth(sim.payoff[d.id])}</td></tr>`).join("");
+
+  const upcoming = db.events.filter((e) => e.event_date >= todayISO())
+    .sort((a, b) => a.event_date.localeCompare(b.event_date)).slice(0, 4);
+  $("#home-events").innerHTML = upcoming.length
+    ? `<tr><th>Event</th><th>Date</th><th class="num">Amount</th><th class="num">To debt</th></tr>` +
+      upcoming.map((e) => `<tr><td>${esc(e.name)}</td><td>${esc(e.event_date)}</td>
+        <td class="num">${fmtMoney(e.amount)}</td><td class="num">${fmtMoney(e.allocate_amount)}</td></tr>`).join("")
+    : `<tr><td class="hint">None scheduled — add vests and bonuses under Setup.</td></tr>`;
+}
+
+/* ============================== report ============================== */
+function renderReport() {
+  const plan = planScenario();
+  const sim = simulate(plan);
+  const base = simulate(BASELINE);
+  const goals = goalStatus(sim);
+  const alerts = promoAlerts(sim);
+  const total = db.debts.reduce((a, d) => a + +d.balance, 0);
+  const floor = +db.settings.emergency_floor || 0;
+  const snapDates = [...new Set(db.snapshots.map((s) => s.snap_date))].sort();
+  const lastSnap = snapDates[snapDates.length - 1];
+  let planVsActual = "No snapshots recorded yet.";
+  if (lastSnap) {
+    const actual = db.snapshots.filter((s) => s.snap_date === lastSnap)
+      .reduce((a, s) => a + +s.balance, 0);
+    let planned = null;
+    for (const row of sim.monthly) if (row.month <= lastSnap.slice(0, 7)) planned = row.total;
+    planVsActual = planned != null
+      ? `Latest snapshot ${lastSnap}: ${fmtMoney(actual)} actual vs ${fmtMoney(planned)} planned — ` +
+        `${fmtMoney(Math.abs(actual - planned))} ${actual - planned > 0 ? "behind" : "ahead of"} plan.`
+      : `Latest snapshot ${lastSnap}: ${fmtMoney(actual)} total.`;
+  }
+  $("#report-view").innerHTML = `
+    <h1>Debt Payoff — Monthly Status</h1>
+    <p class="hint">Generated ${todayISO()} · plan: ${esc(plan.name)}</p>
+    <div class="rsec"><div style="font-size:38px;font-weight:650">${fmtMoney(total)}</div>
+      <div class="hint">total debt today</div></div><hr>
+    <div class="rsec"><div class="rlabel">DEBTS</div>
+      <table class="table"><tr><th>Name</th><th class="num">Balance</th><th>Rate</th><th>Promo ends</th><th>Payoff</th></tr>
+      ${db.debts.map((d) => `<tr><td>${esc(d.name)}</td><td class="num">${fmtMoney(d.balance)}</td>
+        <td>${d.promo_end ? `0% → ${d.apr}%` : d.apr + "%"}</td>
+        <td>${d.promo_end ? fmtMonth(d.promo_end.slice(0, 7)) : "—"}</td>
+        <td>${fmtMonth(sim.payoff[d.id])}</td></tr>`).join("")}</table></div>
+    <div class="rsec"><div class="rlabel">GOALS</div>
+      ${goals.map((g) => `<div>${g.on_track ? "✓ ON TRACK" : "✗ AT RISK"} — ${esc(g.goal)} by ${g.due},
+        projected ${fmtMonth(g.projected)}</div>`).join("")}</div>
+    <div class="rsec"><div class="rlabel">ALERTS</div>
+      ${alerts.length || sim.violations.length
+        ? alerts.map((a) => `<div>[${a.level.toUpperCase()}] ${esc(a.message)}</div>`).join("") +
+          (sim.violations.length
+            ? `<div>[BUFFER] Cash dips below ${fmtMoney(floor)} in ${sim.violations.length} month(s), ` +
+              `first ${fmtMonth(sim.violations[0].month)} at ${fmtMoney(sim.violations[0].cash)}.</div>` : "")
+        : "<div>None — promos covered and cash stays above the floor.</div>"}</div>
+    <div class="rsec"><div class="rlabel">PLAN VS ACTUAL</div><div>${planVsActual}</div></div>
+    <div class="rsec"><div class="rlabel">PLAN SUMMARY</div>
+      <div>Debt-free: ${fmtMonth(sim.debtFree)}</div>
+      <div>Total interest under plan: ${fmtMoney(sim.totalInterest)}</div>
+      <div>Interest saved vs minimums only: ${fmtMoney(base.totalInterest - sim.totalInterest)}</div>
+      <div>Months cut vs minimums only: ${base.months - sim.months}</div>
+      <div>Lowest projected cash: ${fmtMoney(sim.minCash)} (floor ${fmtMoney(floor)})</div></div>
+    <hr><p class="hint">Generated locally by Debt Payoff Command Center</p>
+    <div class="row-actions no-print">
+      <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+      <button class="btn ghost" onclick="document.body.classList.remove('reporting')">Back</button>
+    </div>`;
+  document.body.classList.add("reporting");
+  scrollTo(0, 0);
+}
+
+/* ============================== plans ============================== */
+let planSelection = null;
+function renderPlans() {
+  if (planSelection == null) planSelection = new Set(db.scenarios.slice(0, 3).map((s) => s.id));
+  for (const id of [...planSelection]) if (!db.scenarios.some((s) => s.id === id)) planSelection.delete(id);
+
+  const pal = palette();
+  const ids = [...planSelection].sort((a, b) => a - b);
+  const picker = $("#plan-picker");
+  picker.innerHTML = "";
+  for (const s of db.scenarios) {
+    const chip = document.createElement("span");
+    chip.className = "chip" + (planSelection.has(s.id) ? " on" : "");
+    const sw = document.createElement("span");
+    sw.className = "swatch";
+    sw.style.background = planSelection.has(s.id) ? pal[ids.indexOf(s.id)] ?? cssVar("--muted") : "transparent";
+    const label = document.createElement("span");
+    label.textContent = s.name + (s.is_plan ? " ★" : "");
+    chip.append(sw, label);
+    chip.addEventListener("click", () => {
+      if (planSelection.has(s.id)) planSelection.delete(s.id);
+      else if (planSelection.size >= 3) return toast("Compare up to 3 (plus baseline)");
+      else planSelection.add(s.id);
+      renderPlans();
+    });
+    picker.appendChild(chip);
+  }
+
+  const sims = [simulate(BASELINE), ...ids.map((id) => simulate(db.scenarios.find((s) => s.id === id)))];
+  const series = sims.map((r, i) => ({
+    name: r.scenario.name,
+    color: i === 0 ? cssVar("--muted") : pal[i - 1],
+    points: new Map(r.monthly.map((m) => [m.month, m.total])),
+  }));
+  lineChart($("#plan-chart"), series, { height: 320 });
+
+  const base = sims[0];
+  const g0 = goalStatus(base);
+  const ccDue = g0.find((g) => g.goal.includes("Cards"))?.due;
+  const loanDue = g0.find((g) => g.goal.includes("Loan"))?.due;
+  $("#plan-table").innerHTML = `
+    <tr><th>Scenario</th><th>Debt-free</th><th class="num">Interest</th><th class="num">Saved</th>
+      <th class="num">Mo cut</th><th>Cards ${fmtMonth(ccDue?.slice(0, 7))}</th>
+      <th>Loan ${fmtMonth(loanDue?.slice(0, 7))}</th><th class="num">Min cash</th><th>Flags</th></tr>` +
+    sims.map((r, i) => {
+      const goals = goalStatus(r);
+      const cc = goals.find((g) => g.goal.includes("Cards"));
+      const loan = goals.find((g) => g.goal.includes("Loan"));
+      const flags = [];
+      if (r.violations.length) flags.push(`cash &lt; floor ×${r.violations.length}`);
+      for (const a of promoAlerts(r)) flags.push((a.level === "critical" ? "⚠ " : "△ ") + esc(a.message.split(":")[0]));
+      const mark = (g) => g ? (g.on_track
+        ? `<span class="ok-mark">✓ ${fmtMonth(g.projected)}</span>`
+        : `<span class="risk-mark">✗ ${fmtMonth(g.projected)}</span>`) : "—";
+      return `<tr>
+        <td><span class="swatch" style="background:${i === 0 ? cssVar("--muted") : pal[i - 1]}"></span>${esc(r.scenario.name)}</td>
+        <td>${fmtMonth(r.debtFree)}</td>
+        <td class="num">${fmtMoney(r.totalInterest)}</td>
+        <td class="num">${i === 0 ? "—" : fmtMoney(base.totalInterest - r.totalInterest)}</td>
+        <td class="num">${i === 0 ? "—" : base.months - r.months}</td>
+        <td>${mark(cc)}</td><td>${mark(loan)}</td>
+        <td class="num">${fmtMoney(r.minCash)}</td>
+        <td>${flags.length ? flags.join("; ") : '<span class="ok-mark">none</span>'}</td></tr>`;
+    }).join("");
+
+  renderPlanEditor();
+}
+
+function renderPlanEditor() {
+  const box = $("#plan-editor");
+  box.innerHTML = "";
+  const debtOptions = (sel) => `<option value="">Loan first, then highest APR</option>` +
+    db.debts.map((d) => `<option value="${d.id}" ${sel === d.id ? "selected" : ""}>${esc(d.name)}</option>`).join("");
+  for (const s of db.scenarios) {
+    const block = document.createElement("details");
+    block.className = "block";
+    block.innerHTML = `
+      <summary>${esc(s.name)}${s.is_plan ? " ★" : ""}
+        <span class="sub">${s.extra_monthly ? "+" + fmtMoney(s.extra_monthly) + "/mo" : "no extra"}</span></summary>
+      <div class="inner">
+        <div class="form-grid">
+          <div class="field wide"><label>Name</label><input name="name" value="${esc(s.name)}"></div>
+          <div class="field"><label>Extra monthly ($)</label>
+            <input name="extra_monthly" type="number" inputmode="decimal" value="${s.extra_monthly}"></div>
+          <div class="field"><label>Apply income events</label>
+            <select name="use_income_events">
+              <option value="1" ${s.use_income_events ? "selected" : ""}>Yes</option>
+              <option value="0" ${!s.use_income_events ? "selected" : ""}>No</option></select></div>
+          <div class="field wide"><label>This is the plan (drives Home)</label>
+            <select name="is_plan">
+              <option value="0" ${!s.is_plan ? "selected" : ""}>No</option>
+              <option value="1" ${s.is_plan ? "selected" : ""}>Yes ★</option></select></div>
+        </div>
+        <div class="lump-list"></div>
+        <div class="row-actions">
+          <button class="btn small ghost" data-act="add-lump">+ Lump sum</button>
+          <button class="btn small" data-act="save">Save</button>
+          <button class="btn small danger" data-act="delete">Delete</button>
+        </div>
+      </div>`;
+    const lumpList = $(".lump-list", block);
+    const addLump = (l = {}) => {
+      const row = document.createElement("div");
+      row.className = "form-grid";
+      row.style.marginTop = "8px";
+      row.innerHTML = `
+        <div class="field"><label>Lump date</label><input name="lump_date" type="date" value="${esc(l.lump_date || "")}"></div>
+        <div class="field"><label>Amount ($)</label><input name="amount" type="number" inputmode="decimal" value="${l.amount ?? ""}"></div>
+        <div class="field wide"><label>Toward</label><select name="debt_id">${debtOptions(l.debt_id)}</select></div>
+        <div class="field wide"><button class="btn small danger" data-act="rm-lump">Remove lump</button></div>`;
+      lumpList.appendChild(row);
+    };
+    (s.lumps || []).forEach(addLump);
+    block.addEventListener("click", (e) => {
+      const act = e.target.dataset?.act;
+      if (!act) return;
+      e.preventDefault();
+      if (act === "add-lump") return addLump();
+      if (act === "rm-lump") return e.target.closest(".form-grid").remove();
+      if (act === "delete") {
+        if (!confirm(`Delete "${s.name}"?`)) return;
+        db.scenarios = db.scenarios.filter((x) => x.id !== s.id);
+        save(); toast("Scenario deleted"); renderPlans();
+        return;
+      }
+      const val = (n) => $(`[name="${n}"]`, block).value;
+      s.name = val("name");
+      s.extra_monthly = num(val("extra_monthly")) || 0;
+      s.use_income_events = +val("use_income_events");
+      const isPlan = +val("is_plan");
+      if (isPlan) for (const x of db.scenarios) x.is_plan = 0;
+      s.is_plan = isPlan;
+      s.lumps = [...lumpList.children].map((row) => ({
+        lump_date: $('[name="lump_date"]', row).value,
+        amount: num($('[name="amount"]', row).value),
+        debt_id: num($('[name="debt_id"]', row).value),
+      })).filter((l) => l.lump_date && l.amount);
+      save(); toast("Scenario saved"); renderPlans();
+    });
+    box.appendChild(block);
+  }
+  const add = document.createElement("button");
+  add.className = "btn ghost";
+  add.textContent = "+ New scenario";
+  add.addEventListener("click", () => {
+    db.scenarios.push({ id: nextId(db.scenarios), name: "New scenario",
+      extra_monthly: 0, use_income_events: 1, is_plan: 0, lumps: [] });
+    save(); renderPlans();
+  });
+  box.appendChild(add);
+}
+
+/* ============================== log ============================== */
+function renderLog() {
+  const form = $("#snap-form");
+  form.innerHTML = `
+    <div class="field wide"><label>Snapshot date</label><input name="snap_date" type="date" value="${todayISO()}"></div>` +
+    db.debts.map((d) => `
+      <div class="field"><label>${esc(d.name)}</label>
+        <input name="debt-${d.id}" type="number" inputmode="decimal" value="${d.balance}"></div>`).join("") + `
+    <div class="field"><label>Cash on hand</label>
+      <input name="cash" type="number" inputmode="decimal" value="${db.settings.cash_on_hand}"></div>
+    <div class="field wide"><button class="btn" type="submit">Save snapshot</button></div>`;
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const snapDate = $('[name="snap_date"]', form).value;
+    for (const d of db.debts) {
+      const bal = num($(`[name="debt-${d.id}"]`, form).value) ?? d.balance;
+      d.balance = bal;
+      db.snapshots = db.snapshots.filter((s) => !(s.snap_date === snapDate && s.debt_id === d.id));
+      db.snapshots.push({ snap_date: snapDate, debt_id: d.id, balance: bal });
+    }
+    const cash = num($('[name="cash"]', form).value);
+    if (cash != null) {
+      db.cashSnapshots = db.cashSnapshots.filter((c) => c.snap_date !== snapDate);
+      db.cashSnapshots.push({ snap_date: snapDate, cash });
+      db.settings.cash_on_hand = cash;
+    }
+    save(); toast("Snapshot saved — balances updated"); renderLog();
+  };
+
+  const byDate = {};
+  for (const s of db.snapshots) (byDate[s.snap_date] ||= {})[s.debt_id] = s.balance;
+  const cashByDate = Object.fromEntries(db.cashSnapshots.map((c) => [c.snap_date, c.cash]));
+  const dates = [...new Set([...Object.keys(byDate), ...Object.keys(cashByDate)])].sort().reverse();
+  $("#snap-history").innerHTML = dates.length
+    ? `<tr><th>Date</th>${db.debts.map((d) => `<th class="num">${esc(d.name)}</th>`).join("")}
+       <th class="num">Total</th><th class="num">Cash</th></tr>` +
+      dates.map((dt) => {
+        const row = byDate[dt] || {};
+        const total = Object.values(row).reduce((a, b) => a + b, 0);
+        return `<tr><td>${esc(dt)}</td>` +
+          db.debts.map((d) => `<td class="num">${row[d.id] != null ? fmtMoney(row[d.id]) : "—"}</td>`).join("") +
+          `<td class="num"><strong>${Object.keys(row).length ? fmtMoney(total) : "—"}</strong></td>
+           <td class="num">${cashByDate[dt] != null ? fmtMoney(cashByDate[dt]) : "—"}</td></tr>`;
+      }).join("")
+    : `<tr><td class="hint">No snapshots yet — save one above.</td></tr>`;
+}
+
+/* ============================== setup ============================== */
+const SETTING_FIELDS = [
+  ["cash_on_hand", "Cash on hand ($)", "number"],
+  ["emergency_floor", "Emergency floor ($)", "number"],
+  ["monthly_surplus", "Monthly surplus ($)", "number"],
+  ["monthly_surplus_after_baby", "Surplus after baby ($)", "number"],
+  ["baby_date", "Baby date", "date"],
+  ["cc_goal_date", "Cards-at-$0 goal", "date"],
+  ["loan_goal_date", "Loan payoff goal", "date"],
+];
+function renderSetup() {
+  const sf = $("#settings-form");
+  sf.innerHTML = SETTING_FIELDS.map(([k, label, type]) => `
+    <div class="field"><label>${esc(label)}</label>
+      <input name="${k}" type="${type}" ${type === "number" ? 'inputmode="decimal"' : ""} value="${esc(db.settings[k] ?? "")}"></div>`)
+    .join("") + `<div class="field wide"><button class="btn" type="submit">Save settings</button></div>`;
+  sf.onsubmit = (e) => {
+    e.preventDefault();
+    for (const [k, , type] of SETTING_FIELDS) {
+      const v = $(`[name="${k}"]`, sf).value;
+      db.settings[k] = type === "number" ? (num(v) ?? "") : v;
+    }
+    save(); toast("Settings saved");
+  };
+
+  renderDebtsEditor();
+  renderEventsEditor();
+
+  $("#export-btn").onclick = () => {
+    const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `debt-backup-${todayISO()}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  $("#import-file").onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    file.text().then((text) => {
+      const data = JSON.parse(text);
+      if (!data.debts || !data.settings) throw new Error("bad file");
+      db = data; save(); toast("Backup imported"); renderSetup(); renderHome();
+    }).catch(() => toast("That file isn't a valid backup"));
+    e.target.value = "";
+  };
+  $("#reset-btn").onclick = () => {
+    if (!confirm("Erase everything and restore the seed data?")) return;
+    db = structuredClone(SEED); save(); toast("Reset to seed data"); renderSetup();
+  };
+}
+
+function renderDebtsEditor() {
+  const box = $("#debts-editor");
+  box.innerHTML = "";
+  const field = (label, name, type, value) => `
+    <div class="field"><label>${esc(label)}</label>
+      <input name="${name}" type="${type}" ${type === "number" ? 'inputmode="decimal"' : ""} value="${value ?? ""}"></div>`;
+  for (const d of db.debts) {
+    const block = document.createElement("details");
+    block.className = "block";
+    block.innerHTML = `
+      <summary>${esc(d.name)} <span class="sub">${fmtMoney(d.balance)}</span></summary>
+      <div class="inner"><div class="form-grid">
+        ${field("Name", "name", "text", esc(d.name))}
+        <div class="field"><label>Kind</label><select name="kind">
+          <option value="card" ${d.kind === "card" ? "selected" : ""}>Credit card</option>
+          <option value="loan" ${d.kind === "loan" ? "selected" : ""}>Loan</option></select></div>
+        ${field("Balance ($)", "balance", "number", d.balance)}
+        ${field("APR % (post-promo)", "apr", "number", d.apr)}
+        ${field("Promo APR %", "promo_apr", "number", d.promo_apr)}
+        ${field("Promo end", "promo_end", "date", d.promo_end)}
+        ${field("Min payment ($)", "min_payment", "number", d.min_payment)}
+        ${field("Term (months)", "term_months", "number", d.term_months)}
+        ${field("Originated", "origination_date", "date", d.origination_date)}
+        ${field("Original principal", "original_principal", "number", d.original_principal)}
+        <div class="field wide"><label>Payoff plan note</label>
+          <input name="payoff_plan" type="text" value="${esc(d.payoff_plan)}"></div>
+      </div>
+      <div class="row-actions">
+        <button class="btn small" data-act="save">Save</button>
+        <button class="btn small danger" data-act="delete">Delete</button>
+      </div></div>`;
+    block.addEventListener("click", (e) => {
+      const act = e.target.dataset?.act;
+      if (!act) return;
+      e.preventDefault();
+      if (act === "delete") {
+        if (!confirm(`Delete "${d.name}" and its history?`)) return;
+        db.debts = db.debts.filter((x) => x.id !== d.id);
+        db.snapshots = db.snapshots.filter((s) => s.debt_id !== d.id);
+        save(); toast("Debt deleted"); renderSetup();
+        return;
+      }
+      const val = (n) => $(`[name="${n}"]`, block).value;
+      Object.assign(d, {
+        name: val("name"), kind: val("kind"),
+        balance: num(val("balance")) || 0, apr: num(val("apr")) || 0,
+        promo_apr: num(val("promo_apr")), promo_end: val("promo_end") || null,
+        min_payment: num(val("min_payment")), term_months: num(val("term_months")),
+        origination_date: val("origination_date") || null,
+        original_principal: num(val("original_principal")),
+        payoff_plan: val("payoff_plan") || null,
+      });
+      save(); toast("Debt saved"); renderSetup();
+    });
+    box.appendChild(block);
+  }
+  const add = document.createElement("button");
+  add.className = "btn ghost";
+  add.textContent = "+ New debt";
+  add.addEventListener("click", () => {
+    db.debts.push({ id: nextId(db.debts), name: "New debt", kind: "card", balance: 0, apr: 0,
+      promo_apr: null, promo_end: null, min_payment: null, term_months: null,
+      origination_date: null, original_principal: null, payoff_plan: null });
+    save(); renderSetup();
+  });
+  box.appendChild(add);
+}
+
+function renderEventsEditor() {
+  const box = $("#events-editor");
+  box.innerHTML = "";
+  const debtOptions = (sel) => `<option value="">— none (all to cash)</option>` +
+    db.debts.map((d) => `<option value="${d.id}" ${sel === d.id ? "selected" : ""}>${esc(d.name)}</option>`).join("");
+  for (const ev of db.events) {
+    const block = document.createElement("details");
+    block.className = "block";
+    block.innerHTML = `
+      <summary>${esc(ev.name)} <span class="sub">${esc(ev.event_date)} · ${fmtMoney(ev.amount)}</span></summary>
+      <div class="inner"><div class="form-grid">
+        <div class="field wide"><label>Name</label><input name="name" value="${esc(ev.name)}"></div>
+        <div class="field"><label>Kind</label><select name="kind">
+          ${["rsu", "bonus", "other"].map((k) =>
+            `<option value="${k}" ${ev.kind === k ? "selected" : ""}>${k.toUpperCase()}</option>`).join("")}</select></div>
+        <div class="field"><label>Date</label><input name="event_date" type="date" value="${esc(ev.event_date)}"></div>
+        <div class="field"><label>Net amount ($)</label>
+          <input name="amount" type="number" inputmode="decimal" value="${ev.amount}"></div>
+        <div class="field"><label>To debt ($)</label>
+          <input name="allocate_amount" type="number" inputmode="decimal" value="${ev.allocate_amount ?? ""}"></div>
+        <div class="field wide"><label>Allocate to</label>
+          <select name="allocate_debt_id">${debtOptions(ev.allocate_debt_id)}</select></div>
+      </div>
+      <div class="row-actions">
+        <button class="btn small" data-act="save">Save</button>
+        <button class="btn small danger" data-act="delete">Delete</button>
+      </div></div>`;
+    block.addEventListener("click", (e) => {
+      const act = e.target.dataset?.act;
+      if (!act) return;
+      e.preventDefault();
+      if (act === "delete") {
+        if (!confirm(`Delete "${ev.name}"?`)) return;
+        db.events = db.events.filter((x) => x.id !== ev.id);
+        save(); toast("Event deleted"); renderSetup();
+        return;
+      }
+      const val = (n) => $(`[name="${n}"]`, block).value;
+      Object.assign(ev, {
+        name: val("name"), kind: val("kind"), event_date: val("event_date"),
+        amount: num(val("amount")) || 0,
+        allocate_debt_id: num(val("allocate_debt_id")),
+        allocate_amount: num(val("allocate_amount")),
+      });
+      save(); toast("Event saved"); renderSetup();
+    });
+    box.appendChild(block);
+  }
+  const add = document.createElement("button");
+  add.className = "btn ghost";
+  add.textContent = "+ New income event";
+  add.addEventListener("click", () => {
+    db.events.push({ id: nextId(db.events), name: "New event", kind: "bonus",
+      event_date: todayISO(), amount: 0, allocate_debt_id: null, allocate_amount: null });
+    save(); renderSetup();
+  });
+  box.appendChild(add);
+}
+
+/* ============================== tabs & boot ============================== */
+const RENDERERS = { home: renderHome, plans: renderPlans, log: renderLog, setup: renderSetup };
+document.getElementById("tabbar").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-tab]");
+  if (!btn) return;
+  document.body.classList.remove("reporting");
+  for (const b of document.querySelectorAll("#tabbar button"))
+    b.classList.toggle("active", b === btn);
+  for (const s of document.querySelectorAll(".tab"))
+    s.classList.toggle("active", s.id === "tab-" + btn.dataset.tab);
+  RENDERERS[btn.dataset.tab]();
+  scrollTo(0, 0);
+});
+document.getElementById("report-btn").addEventListener("click", renderReport);
+
+loadState();
+save();
+renderHome();
+</script>
+
+</body>
+</html>
