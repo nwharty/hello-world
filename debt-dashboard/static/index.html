@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debt Payoff Command Center</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='13' font-size='13'%3E%F0%9F%93%89%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Debt Payoff <span>Command Center</span></div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="dashboard" class="active">Dashboard</button>
+    <button data-tab="scenarios">Scenarios</button>
+    <button data-tab="snapshots">Snapshots</button>
+    <button data-tab="config">Config</button>
+  </nav>
+  <a class="btn ghost" href="/api/report" download>Export PDF</a>
+</header>
+
+<main>
+  <section id="tab-dashboard" class="tab active">
+    <div id="alerts"></div>
+    <div class="hero-row">
+      <div class="hero">
+        <div class="hero-label">Total debt today</div>
+        <div class="hero-value" id="hero-total">—</div>
+      </div>
+      <div class="tiles" id="tiles"></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h2>Trajectory — actual vs. plan</h2>
+        <span class="hint">Plan = the scenario marked “plan” on the Scenarios tab</span>
+      </div>
+      <div id="trajectory-chart" class="chart"></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <h2>Debts</h2>
+        <table class="table" id="debt-summary"></table>
+      </div>
+      <div class="card">
+        <h2>Upcoming income events</h2>
+        <table class="table" id="upcoming-events"></table>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-scenarios" class="tab">
+    <div class="card">
+      <div class="card-head">
+        <h2>Compare scenarios</h2>
+        <span class="hint">Baseline (minimum payments only) is always included</span>
+      </div>
+      <div id="scenario-picker" class="filter-row"></div>
+      <div id="compare-chart" class="chart"></div>
+      <div class="scroll-x"><table class="table" id="compare-table"></table></div>
+    </div>
+    <div class="card">
+      <h2>Edit scenarios</h2>
+      <div id="scenario-editor"></div>
+    </div>
+  </section>
+
+  <section id="tab-snapshots" class="tab">
+    <div class="card">
+      <h2>Record a monthly snapshot</h2>
+      <p class="hint">Enter today’s real balances; this logs history, updates current balances, and feeds the trajectory chart.</p>
+      <form id="snapshot-form" class="form-grid"></form>
+    </div>
+    <div class="card">
+      <h2>History</h2>
+      <div class="scroll-x"><table class="table" id="snapshot-history"></table></div>
+    </div>
+  </section>
+
+  <section id="tab-config" class="tab">
+    <div class="card">
+      <h2>Household settings</h2>
+      <p class="hint">“Monthly surplus” is what’s left each month after all regular bills and minimum
+      payments — it funds extra principal. The post-baby value applies from the baby date onward.</p>
+      <form id="settings-form" class="form-grid"></form>
+    </div>
+    <div class="card">
+      <h2>Debts</h2>
+      <div id="debts-editor"></div>
+    </div>
+    <div class="card">
+      <h2>Income events (RSU vests, bonuses)</h2>
+      <p class="hint">“To debt” sends that amount straight to the chosen balance in the event’s month; the rest lands in cash.</p>
+      <div id="events-editor"></div>
+    </div>
+  </section>
+</main>
+
+<div id="tooltip" class="tooltip" hidden></div>
+<div id="toast" class="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
